@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KUET Business and Entrepreneurship Club</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+  <body>
+    <header class="hero" id="top">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source src="assets/full_event.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-topbar">
+        <div class="club-name">KUET Business &amp; Entrepreneurship Club</div>
+        <a class="btn-register" href="#register-modal">Register Now</a>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span>KUET BUSINESS</span>
+          <span>&amp; ENTREPRENEURSHIP CLUB</span>
+        </h1>
+        <p class="tag">
+          The Premier Business and Entrepreneurship Club at KUET
+        </p>
+      </div>
+    </header>
+
+    <section class="modal" id="register-modal" aria-label="Registration form">
+      <a href="#top" class="modal-backdrop" aria-label="Close"></a>
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2>Register Now</h2>
+          <a class="close-modal" href="#top" aria-label="Close">&times;</a>
+        </div>
+
+        <form action="#" method="post" class="form">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" name="fullname" required />
+
+          <fieldset class="radio-group">
+            <legend>Gender</legend>
+            <div class="radio-row">
+              <label class="radio-option" for="gender-male">
+                <input
+                  type="radio"
+                  id="gender-male"
+                  name="gender"
+                  value="male"
+                  required
+                />
+                Male
+              </label>
+              <label class="radio-option" for="gender-female">
+                <input
+                  type="radio"
+                  id="gender-female"
+                  name="gender"
+                  value="female"
+                />
+                Female
+              </label>
+              <label class="radio-option" for="gender-other">
+                <input
+                  type="radio"
+                  id="gender-other"
+                  name="gender"
+                  value="other"
+                />
+                Other
+              </label>
+            </div>
+          </fieldset>
+
+          <label for="department">Department</label>
+          <select id="department" name="department" required>
+            <option value="" selected disabled>Select department</option>
+            <option value="cse">CSE</option>
+            <option value="ece">ECE</option>
+            <option value="me">ME</option>
+            <option value="civil">Civil</option>
+            <option value="arch">Architecture</option>
+          </select>
+
+          <label for="roll">Roll</label>
+          <input type="text" id="roll" name="roll" required />
+
+          <label for="session">Session Info</label>
+          <input
+            type="text"
+            id="session"
+            name="session"
+            placeholder="e.g. 2023-24"
+            required
+          />
+
+          <label for="remarks">Remarks</label>
+          <textarea id="remarks" name="remarks" rows="3"></textarea>
+
+          <button type="submit">Submit Registration</button>
+        </form>
+      </div>
+    </section>
+  </body>
+</html>
