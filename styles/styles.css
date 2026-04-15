@@ -76,10 +76,12 @@ body {
   gap: 1rem;
 }
 
-.club-name {
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
-  font-weight: 600;
-  text-shadow: 0 2px 10px var(--shadow);
+.club-logo {
+  width: clamp(220px, 32vw, 380px);
+  height: auto;
+  max-height: 78px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px var(--shadow));
 }
 
 .btn-register {
@@ -292,6 +294,11 @@ body {
   .btn-register {
     padding: 0.55rem 0.95rem;
     font-size: 0.78rem;
+  }
+
+  .club-logo {
+    width: min(62vw, 270px);
+    max-height: 62px;
   }
 
   .hero-title {
