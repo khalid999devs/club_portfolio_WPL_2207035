@@ -13,7 +13,7 @@
       </video>
       <div class="hero-overlay"></div>
 
-      <div class="hero-topbar">
+      <nav class="hero-topbar" aria-label="Primary">
         <img
           class="club-logo"
           src="https://www.kbec-official.org/assets/kbeclogoDarkBG-BXKv6nqZ.svg"
@@ -21,13 +21,58 @@
           width="360"
           height="80"
         />
-        <a class="btn-register" href="#register-modal">Register Now</a>
+        <div class="hero-actions">
+          <button
+            class="sound-toggle"
+            type="button"
+            aria-label="Turn sound on"
+            aria-pressed="false"
+            data-state="muted"
+          >
+            <span class="sound-bars" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+          <button
+            class="menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-menu"
+          >
+            <span class="menu-label">Menu</span>
+            <span class="menu-dots" aria-hidden="true">
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="site-menu" id="site-menu" aria-hidden="true">
+        <a href="#top">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#events">Events</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#hall-of-fame">Hall of Fame</a>
+        <a href="#partners">Club Partners</a>
+        <a href="#alumni">Alumni</a>
+        <a href="#executive-panel">Executive Panel</a>
+        <a href="#faculty-advisors">Faculty Advisors</a>
       </div>
 
       <div class="hero-content">
         <h1 class="hero-title">
-          <span>KUET BUSINESS</span>
-          <span>&amp; ENTREPRENEURSHIP CLUB</span>
+          <span class="title-line">KUET BUSINESS</span>
+          <span class="title-line title-line-combo">
+            <span class="title-group">
+              <span class="title-part">&amp;</span>
+              <span class="title-part">ENTREPRENEURSHIP</span>
+            </span>
+            <span class="title-part">CLUB</span>
+          </span>
         </h1>
         <p class="tag">
           The Premier Business and Entrepreneurship Club at KUET
@@ -110,5 +155,6 @@
         </form>
       </div>
     </section>
+    <script src="js/main.js"></script>
   </body>
 </html>
