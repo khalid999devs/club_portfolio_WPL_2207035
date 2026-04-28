@@ -3,6 +3,7 @@ const soundToggle = document.querySelector('.sound-toggle');
 const menuButton = document.querySelector('.menu-button');
 const menuLabel = document.querySelector('.menu-label');
 const siteMenu = document.querySelector('.site-menu');
+const backToTop = document.querySelector('.back-to-top');
 
 function updateSoundButton() {
   if (!heroVideo || !soundToggle) {
@@ -58,9 +59,41 @@ if (menuButton && siteMenu) {
     }
   });
 
+  document.addEventListener('click', (event) => {
+    const clickedMenuControl = menuButton.contains(event.target);
+    const clickedMenuPanel = siteMenu.contains(event.target);
+
+    if (
+      siteMenu.classList.contains('is-open') &&
+      !clickedMenuControl &&
+      !clickedMenuPanel
+    ) {
+      setMenuOpen(false);
+    }
+  });
+
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       setMenuOpen(false);
     }
   });
+}
+
+function updateBackToTop() {
+  if (!backToTop) {
+    return;
+  }
+
+  const threshold = Math.max(360, window.innerHeight * 0.58);
+  const isVisible = window.scrollY > threshold;
+
+  backToTop.classList.toggle('is-visible', isVisible);
+  backToTop.setAttribute('aria-hidden', String(!isVisible));
+  backToTop.tabIndex = isVisible ? 0 : -1;
+}
+
+if (backToTop) {
+  updateBackToTop();
+  window.addEventListener('scroll', updateBackToTop, { passive: true });
+  window.addEventListener('resize', updateBackToTop);
 }
