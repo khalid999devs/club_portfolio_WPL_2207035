@@ -4,6 +4,7 @@ const menuButton = document.querySelector('.menu-button');
 const menuLabel = document.querySelector('.menu-label');
 const siteMenu = document.querySelector('.site-menu');
 const backToTop = document.querySelector('.back-to-top');
+const soundIcon = document.querySelector('.sound-icon');
 
 function updateSoundButton() {
   if (!heroVideo || !soundToggle) {
@@ -17,6 +18,11 @@ function updateSoundButton() {
     'aria-label',
     isMuted ? 'Turn sound on' : 'Turn sound off',
   );
+
+  if (soundIcon) {
+    soundIcon.classList.toggle('fa-volume-xmark', isMuted);
+    soundIcon.classList.toggle('fa-volume-high', !isMuted);
+  }
 }
 
 if (heroVideo && soundToggle) {

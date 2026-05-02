@@ -195,68 +195,21 @@ body {
   transform: translateY(0);
 }
 
-.sound-bars {
-  display: flex;
-  align-items: center;
-  gap: 0.15rem;
-  height: 0.95rem;
+.sound-icon {
+  font-size: 1rem;
 }
 
-.sound-bars span {
-  display: block;
-  width: 0.12rem;
-  background: currentColor;
-  border-radius: 999px;
-  opacity: 0.85;
+.sound-toggle[data-state='muted'] .sound-icon {
+  opacity: 0.62;
 }
 
-.sound-bars span:nth-child(1) {
-  height: 0.42rem;
+.sound-toggle[data-state='sound'] .sound-icon {
+  animation: soundPulse 0.9s ease-in-out infinite alternate;
 }
 
-.sound-bars span:nth-child(2) {
-  height: 0.68rem;
-}
-
-.sound-bars span:nth-child(3) {
-  height: 0.95rem;
-}
-
-.sound-bars span:nth-child(4) {
-  height: 0.58rem;
-}
-
-.sound-toggle[data-state='muted'] .sound-bars span {
-  animation: none;
-  opacity: 0.55;
-}
-
-.sound-toggle[data-state='sound'] .sound-bars span {
-  animation: soundPulse 0.85s ease-in-out infinite alternate;
-}
-
-.sound-toggle[data-state='sound'] .sound-bars span:nth-child(2) {
-  animation-delay: 0.12s;
-}
-
-.sound-toggle[data-state='sound'] .sound-bars span:nth-child(3) {
-  animation-delay: 0.24s;
-}
-
-.sound-toggle[data-state='sound'] .sound-bars span:nth-child(4) {
-  animation-delay: 0.08s;
-}
-
-.menu-dots {
-  display: inline-flex;
-  gap: 0.2rem;
-}
-
-.menu-dots span {
-  width: 0.2rem;
-  height: 0.2rem;
-  border-radius: 50%;
-  background: currentColor;
+.menu-icon {
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .site-menu {
@@ -380,11 +333,11 @@ body {
 
 @keyframes soundPulse {
   from {
-    transform: scaleY(0.72);
+    transform: scale(0.94);
   }
 
   to {
-    transform: scaleY(1.08);
+    transform: scale(1.08);
   }
 }
 
@@ -418,18 +371,27 @@ body {
 
 .about-swoosh {
   position: absolute;
-  inset: 0 auto auto 0;
+  left: 0;
+  top: 0;
   z-index: 0;
   width: min(54vw, 58rem);
   height: 88%;
+  overflow: hidden;
   pointer-events: none;
 }
 
-.about-swoosh path {
-  fill: none;
-  stroke: rgba(230, 189, 119, 0.34);
-  stroke-width: 34;
-  stroke-linecap: round;
+.about-swoosh::before {
+  content: '';
+  position: absolute;
+  left: -32rem;
+  top: -6rem;
+  width: min(82vw, 62rem);
+  height: 42rem;
+  border: clamp(1.4rem, 1.8vw, 2.2rem) solid rgba(230, 189, 119, 0.34);
+  border-left-color: transparent;
+  border-top-color: rgba(230, 189, 119, 0.18);
+  border-radius: 46% 54% 48% 52%;
+  transform: rotate(22deg);
 }
 
 .about-copy,
@@ -522,6 +484,10 @@ body {
     background 0.18s ease;
 }
 
+.back-to-top i {
+  font-size: 1.28rem;
+}
+
 .back-to-top.is-visible {
   opacity: 1;
   visibility: visible;
@@ -612,6 +578,7 @@ body {
 
 .footer-contact a,
 .footer-explore a,
+.social-links a,
 .developer-card {
   color: inherit;
   text-decoration: none;
@@ -630,15 +597,14 @@ body {
     transform 0.18s ease;
 }
 
-.footer-contact svg {
+.footer-contact i {
   flex: 0 0 auto;
   width: 1.25rem;
   height: 1.25rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.08rem;
+  line-height: 1;
 }
 
 .footer-contact a:hover,
@@ -705,14 +671,9 @@ body {
     transform 0.18s ease;
 }
 
-.social-links svg {
-  width: 1.26rem;
-  height: 1.26rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.1;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.social-links i {
+  font-size: 1.22rem;
+  line-height: 1;
 }
 
 .social-links a:hover,
@@ -772,11 +733,12 @@ body {
     radial-gradient(circle at 68% 32%, rgba(255, 255, 255, 0.25), transparent 25%),
     linear-gradient(135deg, #0b847f, #083645 72%);
   border-radius: 0.5rem;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 2.28rem;
-  font-weight: 700;
   line-height: 1;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.developer-mark i {
+  font-size: 1.35rem;
 }
 
 .developer-card strong,
@@ -887,6 +849,10 @@ body {
   transition:
     background 0.18s ease,
     color 0.18s ease;
+}
+
+.close-modal i {
+  font-size: 1rem;
 }
 
 .close-modal:hover,
@@ -1415,7 +1381,10 @@ body {
   .developer-mark {
     width: 2.85rem;
     height: 2.85rem;
-    font-size: 2.25rem;
+  }
+
+  .developer-mark i {
+    font-size: 1.25rem;
   }
 }
 
