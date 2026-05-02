@@ -8,6 +8,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles/styles.css" />
   </head>
   <body>
@@ -36,10 +42,13 @@
             aria-pressed="false"
             data-state="muted"
           >
-            <i
-              class="fa-solid fa-volume-xmark sound-icon"
-              aria-hidden="true"
-            ></i>
+            <span class="sound-bars" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
           </button>
           <button
             class="menu-button"
@@ -48,7 +57,10 @@
             aria-controls="site-menu"
           >
             <span class="menu-label">Menu</span>
-            <i class="fa-solid fa-ellipsis menu-icon" aria-hidden="true"></i>
+            <span class="menu-dots" aria-hidden="true">
+              <span></span>
+              <span></span>
+            </span>
           </button>
         </div>
       </nav>
@@ -109,6 +121,144 @@
       </div>
     </section>
 
+    <section class="next-section" id="events" aria-labelledby="next-title">
+      <div class="next-heading">
+        <h2 class="next-title" id="next-title">
+          <span>What&apos;s</span>
+          <span>Next?</span>
+        </h2>
+        <div class="next-rule" aria-hidden="true"></div>
+      </div>
+
+      <div class="next-track" aria-label="Upcoming events">
+        <span>TEDX KUET 2026</span>
+        <span aria-hidden="true">|</span>
+        <span>CASE CRACK 3.0</span>
+        <span aria-hidden="true">|</span>
+        <span>KBEC NEXUS S3</span>
+        <span aria-hidden="true">|</span>
+        <span>TEDX KUET 2026</span>
+      </div>
+    </section>
+
+    <section
+      class="award-section"
+      id="hall-of-fame"
+      aria-labelledby="award-title"
+    >
+      <div class="award-grid" aria-hidden="true"></div>
+      <div class="award-layout">
+        <div class="award-media">
+          <figure class="award-card">
+            <img
+              src="https://admin.kbec-official.org/uploads/general/1000023974-bd6d88.webp"
+              alt="KBEC booth at Club Fair 2025"
+              loading="lazy"
+            />
+          </figure>
+          <div class="award-badge" aria-label="2025 winner">
+            <strong>2025</strong>
+            <span>Winner</span>
+          </div>
+        </div>
+
+        <div class="award-copy">
+          <p class="award-eyebrow">Excellence Recognized</p>
+          <h2 class="award-title" id="award-title">
+            <span>Best Club</span>
+            <span>Award 2025</span>
+          </h2>
+          <div class="award-line" aria-hidden="true"></div>
+          <p>
+            Honored with the prestigious recognition for outstanding
+            contributions to entrepreneurship education, innovation initiatives,
+            and fostering a thriving business community at KUET,
+            <strong>KUET Business and Entrepreneurship Club (KBEC)</strong> has
+            been crowned Joint Champion for Best Club at Club Fair 2025,
+            organized by the Directorate of Students&apos; Welfare (DSW).
+          </p>
+
+          <div class="award-stats" aria-label="Club highlights">
+            <div class="award-stat">
+              <strong>30+</strong>
+              <span>Events Organized</span>
+            </div>
+            <div class="award-stat">
+              <strong>118</strong>
+              <span>Active Members</span>
+            </div>
+            <div class="award-stat">
+              <strong>25+</strong>
+              <span>Industry Partners</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="events-showcase"
+      id="event-showcase"
+      aria-labelledby="events-title"
+    >
+      <div class="events-intro">
+        <h2 class="events-title" id="events-title" aria-label="Events">
+          <span>E</span>
+          <span>V</span>
+          <span>E</span>
+          <span>N</span>
+          <span>T</span>
+          <span>S</span>
+        </h2>
+        <p>
+          Explore the flagship events and competitions hosted by KBEC &mdash;
+          where innovation meets entrepreneurship.
+        </p>
+      </div>
+
+      <article class="event-feature">
+        <div class="event-copy">
+          <h3>TEDXKUET 2026</h3>
+          <div class="event-detail">
+            <span class="event-orbit" aria-hidden="true"></span>
+            <p>Beyond the self you see</p>
+          </div>
+        </div>
+        <figure class="event-image">
+          <img
+            src="https://admin.kbec-official.org/uploads/events/img-20260417-191136-aac911.webp"
+            alt="TEDxKUET 2026 group photo"
+            loading="lazy"
+          />
+        </figure>
+      </article>
+
+      <article class="event-feature event-feature-reverse">
+        <div class="event-copy">
+          <h3>
+            <span>KBEC NEXUS</span>
+            <span>Season 2</span>
+          </h3>
+          <div class="event-detail">
+            <span class="event-orbit" aria-hidden="true"></span>
+            <p>
+              KBEC_NEXUS Season 2, hosted by KUET Business and
+              Entrepreneurship Club (KBEC), is a National Business Case
+              Competition designed to tackle real world business challenges and
+              craft innovative, actionable solutions.
+            </p>
+          </div>
+        </div>
+        <figure class="event-image">
+          <img
+            src="https://admin.kbec-official.org/uploads/events/copy-of-103-bc63b7-857d98.webp"
+            alt="KBEC Nexus Season 2 award trophies"
+            loading="lazy"
+          />
+        </figure>
+      </article>
+    </section>
+
     <footer class="site-footer" aria-labelledby="footer-title">
       <div class="footer-watermark" aria-hidden="true">KBEC</div>
 
@@ -167,13 +317,13 @@
               <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
             </a>
             <a
-              href="https://bd.linkedin.com/company/kuet-business-and-entrepreneurship-club"
+              href="https://www.linkedin.com/company/kuet-business-and-entrepreneurship-club/"
               aria-label="LinkedIn"
             >
               <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
             </a>
             <a
-              href="https://www.instagram.com/kbec.official/"
+              href="https://www.instagram.com/kbec.kuet/"
               aria-label="Instagram"
             >
               <i class="fa-brands fa-instagram" aria-hidden="true"></i>
@@ -182,9 +332,17 @@
 
           <div class="developer-block">
             <h3>Developed By</h3>
-            <a class="developer-card" href="#" aria-label="AlgoOasis">
+            <a
+              class="developer-card"
+              href="https://algo-oasis.com/"
+              aria-label="AlgoOasis"
+            >
               <span class="developer-mark" aria-hidden="true">
-                <i class="fa-solid fa-code"></i>
+                <img
+                  src="https://www.kbec-official.org/assets/algooasis-Da9gRbl-.png"
+                  alt=""
+                  loading="lazy"
+                />
               </span>
               <span>
                 <strong>AlgoOasis</strong>

@@ -1,10 +1,10 @@
 const heroVideo = document.querySelector('.hero-video');
+const heroTopbar = document.querySelector('.hero-topbar');
 const soundToggle = document.querySelector('.sound-toggle');
 const menuButton = document.querySelector('.menu-button');
 const menuLabel = document.querySelector('.menu-label');
 const siteMenu = document.querySelector('.site-menu');
 const backToTop = document.querySelector('.back-to-top');
-const soundIcon = document.querySelector('.sound-icon');
 
 function updateSoundButton() {
   if (!heroVideo || !soundToggle) {
@@ -18,11 +18,6 @@ function updateSoundButton() {
     'aria-label',
     isMuted ? 'Turn sound on' : 'Turn sound off',
   );
-
-  if (soundIcon) {
-    soundIcon.classList.toggle('fa-volume-xmark', isMuted);
-    soundIcon.classList.toggle('fa-volume-high', !isMuted);
-  }
 }
 
 if (heroVideo && soundToggle) {
@@ -102,4 +97,19 @@ if (backToTop) {
   updateBackToTop();
   window.addEventListener('scroll', updateBackToTop, { passive: true });
   window.addEventListener('resize', updateBackToTop);
+}
+
+function updateTopbarState() {
+  if (!heroTopbar) {
+    return;
+  }
+
+  const threshold = Math.max(160, window.innerHeight * 0.18);
+  heroTopbar.classList.toggle('is-scrolled', window.scrollY > threshold);
+}
+
+if (heroTopbar) {
+  updateTopbarState();
+  window.addEventListener('scroll', updateTopbarState, { passive: true });
+  window.addEventListener('resize', updateTopbarState);
 }
