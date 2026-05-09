@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | KUET Business and Entrepreneurship Club</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/register.css" />
+  </head>
+  <body>
+    <header class="register-topbar" aria-label="Registration page header">
+      <a class="brand-link" href="index.html#top" aria-label="Back to home">
+        <img
+          src="https://www.kbec-official.org/assets/kbeclogoDarkBG-BXKv6nqZ.svg"
+          alt="KUET Business and Entrepreneurship Club"
+          width="360"
+          height="80"
+        />
+      </a>
+
+      <nav class="page-actions" aria-label="Registration navigation">
+        <a class="ghost-link" href="index.html#about">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          <span>Back</span>
+        </a>
+        <a class="home-link" href="index.html#top">
+          <span>Home</span>
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
+        </a>
+      </nav>
+    </header>
+
+    <main class="register-page">
+      <section class="register-hero" aria-labelledby="register-title">
+        <div class="intro-panel">
+          <p class="eyebrow">Membership Registration</p>
+          <h1 id="register-title">
+            <span>Join</span>
+            <span>KBEC</span>
+          </h1>
+          <p class="intro-copy">
+            Step into a community built around business thinking, leadership,
+            case solving, events, and real-world execution at KUET.
+          </p>
+
+          <div class="intro-stats" aria-label="Club highlights">
+            <div>
+              <strong>30+</strong>
+              <span>Events</span>
+            </div>
+            <div>
+              <strong>118</strong>
+              <span>Members</span>
+            </div>
+            <div>
+              <strong>25+</strong>
+              <span>Partners</span>
+            </div>
+          </div>
+        </div>
+
+        <section class="form-card" aria-labelledby="form-title">
+          <div class="form-head">
+            <div>
+              <p class="form-kicker">Apply Now</p>
+              <h2 id="form-title">Club Registration Form</h2>
+            </div>
+            <span class="form-badge" aria-hidden="true">
+              <i class="fa-solid fa-user-plus"></i>
+            </span>
+          </div>
+
+          <form class="registration-form" novalidate>
+            <div class="form-grid">
+              <label class="field">
+                <span>Full Name</span>
+                <input
+                  type="text"
+                  name="fullName"
+                  autocomplete="name"
+                  placeholder="Your full name"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span>Student ID / Roll</span>
+                <input
+                  type="text"
+                  name="roll"
+                  inputmode="numeric"
+                  placeholder="e.g. 2107xxx"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span>Email Address</span>
+                <input
+                  type="email"
+                  name="email"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span>Phone Number</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  autocomplete="tel"
+                  placeholder="+880 1XXX XXXXXX"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span>Department</span>
+                <select name="department" required>
+                  <option value="" selected disabled>Select department</option>
+                  <option>Architecture</option>
+                  <option>Biomedical Engineering</option>
+                  <option>Building Engineering and Construction Management</option>
+                  <option>Chemical Engineering</option>
+                  <option>Civil Engineering</option>
+                  <option>Computer Science and Engineering</option>
+                  <option>Electrical and Electronic Engineering</option>
+                  <option>Electronics and Communication Engineering</option>
+                  <option>Energy Science and Engineering</option>
+                  <option>Industrial Engineering and Management</option>
+                  <option>Leather Engineering</option>
+                  <option>Materials Science and Engineering</option>
+                  <option>Mechanical Engineering</option>
+                  <option>Mechatronics Engineering</option>
+                  <option>Textile Engineering</option>
+                  <option>Urban and Regional Planning</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Academic Session</span>
+                <input
+                  type="text"
+                  name="session"
+                  placeholder="e.g. 2023-24"
+                  required
+                />
+              </label>
+
+              <label class="field">
+                <span>Current Level</span>
+                <select name="level" required>
+                  <option value="" selected disabled>Select level</option>
+                  <option>Level 1</option>
+                  <option>Level 2</option>
+                  <option>Level 3</option>
+                  <option>Level 4</option>
+                  <option>Postgraduate</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Preferred Wing</span>
+                <select name="wing" required>
+                  <option value="" selected disabled>Select interest</option>
+                  <option>Business Case and Competitions</option>
+                  <option>Event Operations</option>
+                  <option>Marketing and Sponsorship</option>
+                  <option>Content and Creative</option>
+                  <option>Finance and Documentation</option>
+                  <option>Tech and Web</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field field-wide">
+              <span>Why do you want to join KBEC?</span>
+              <textarea
+                name="motivation"
+                rows="5"
+                maxlength="420"
+                placeholder="Write a short, honest answer..."
+                required
+              ></textarea>
+              <small class="char-count" aria-live="polite">0 / 420</small>
+            </label>
+
+            <fieldset class="choice-block">
+              <legend>Availability</legend>
+              <label>
+                <input type="radio" name="availability" value="weekly" required />
+                <span>Weekly contribution</span>
+              </label>
+              <label>
+                <input type="radio" name="availability" value="events" />
+                <span>Event-based contribution</span>
+              </label>
+              <label>
+                <input type="radio" name="availability" value="flexible" />
+                <span>Flexible schedule</span>
+              </label>
+            </fieldset>
+
+            <label class="agreement">
+              <input type="checkbox" name="agreement" required />
+              <span>
+                I confirm that the information is correct and I am interested
+                in contributing responsibly to KBEC activities.
+              </span>
+            </label>
+
+            <div class="form-actions">
+              <button type="submit">
+                <span>Submit Application</span>
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </button>
+              <p class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <script src="js/register.js"></script>
+  </body>
+</html>
