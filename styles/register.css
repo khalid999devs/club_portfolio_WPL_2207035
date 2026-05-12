@@ -487,6 +487,13 @@ button {
   outline-offset: 4px;
 }
 
+.form-actions button:disabled {
+  cursor: wait;
+  filter: saturate(0.85);
+  opacity: 0.72;
+  transform: none;
+}
+
 .form-status {
   min-height: 1.45rem;
   margin: 0;

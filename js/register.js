@@ -2,6 +2,10 @@ const form = document.querySelector('.registration-form');
 const statusMessage = document.querySelector('.form-status');
 const motivation = document.querySelector('textarea[name="motivation"]');
 const charCount = document.querySelector('.char-count');
+const submitButton = form?.querySelector('button[type="submit"]');
+
+const registrationEndpoint =
+  window.KBEC_API_URL || 'http://localhost:5000/api/registrations';
 
 function updateCharacterCount() {
   if (!motivation || !charCount) {
@@ -19,6 +23,35 @@ function setStatus(message, isError = false) {
 
   statusMessage.textContent = message;
   statusMessage.classList.toggle('is-error', isError);
+}
+
+function setSubmitting(isSubmitting) {
+  if (!submitButton) {
+    return;
+  }
+
+  submitButton.disabled = isSubmitting;
+  submitButton.querySelector('span').textContent = isSubmitting
+    ? 'Submitting...'
+    : 'Submit Application';
+}
+
+function getPayload() {
+  const formData = new FormData(form);
+
+  return {
+    fullName: String(formData.get('fullName') || '').trim(),
+    roll: String(formData.get('roll') || '').trim(),
+    email: String(formData.get('email') || '').trim(),
+    phone: String(formData.get('phone') || '').trim(),
+    department: String(formData.get('department') || '').trim(),
+    session: String(formData.get('session') || '').trim(),
+    level: String(formData.get('level') || '').trim(),
+    wing: String(formData.get('wing') || '').trim(),
+    motivation: String(formData.get('motivation') || '').trim(),
+    availability: String(formData.get('availability') || '').trim(),
+    agreement: form.elements.agreement.checked,
+  };
 }
 
 function markInvalidFields() {
@@ -65,7 +98,7 @@ if (form) {
     setStatus('');
   });
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const invalidFields = markInvalidFields();
@@ -76,8 +109,41 @@ if (form) {
       return;
     }
 
-    form.reset();
-    updateCharacterCount();
-    setStatus('Application received. KBEC will contact you soon.');
+    setSubmitting(true);
+    setStatus('Submitting your application...');
+
+    try {
+      const response = await fetch(registrationEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(getPayload()),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => null);
+        const message =
+          errorBody?.detail ||
+          errorBody?.title ||
+          'Submission failed. Please check the form and try again.';
+
+        setStatus(message, true);
+        return;
+      }
+
+      const result = await response.json();
+
+      form.reset();
+      updateCharacterCount();
+      setStatus(result.message || 'Application received. KBEC will contact you soon.');
+    } catch (error) {
+      setStatus(
+        'Could not reach the registration server. Please start the ASP.NET API and try again.',
+        true,
+      );
+    } finally {
+      setSubmitting(false);
+    }
   });
 }

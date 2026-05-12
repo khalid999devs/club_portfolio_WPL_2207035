@@ -1,1 +1,5 @@
 assets/full_event.mp4
+bin/
+obj/
+backend/**/bin/
+backend/**/obj/
