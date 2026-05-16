@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login | KUET Business and Entrepreneurship Club</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/admin.css" />
+  </head>
+  <body class="admin-auth-page">
+    <header class="admin-topbar" aria-label="Admin login header">
+      <a class="brand-link" href="index.html#top" aria-label="Back to home">
+        <img
+          src="https://www.kbec-official.org/assets/kbeclogoDarkBG-BXKv6nqZ.svg"
+          alt="KUET Business and Entrepreneurship Club"
+          width="360"
+          height="80"
+        />
+      </a>
+
+      <a class="pill-link" href="index.html#top">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>Home</span>
+      </a>
+    </header>
+
+    <main class="auth-shell">
+      <section class="auth-intro" aria-labelledby="auth-title">
+        <p class="eyebrow">Admin Access</p>
+        <h1 id="auth-title">Manage KBEC registrations</h1>
+        <p>
+          Review submitted applications, filter member details, and keep the
+          recruitment pipeline organized from one clean dashboard.
+        </p>
+      </section>
+
+      <section class="auth-card" aria-labelledby="login-title">
+        <div class="card-heading">
+          <div>
+            <p class="eyebrow">Secure Login</p>
+            <h2 id="login-title">Dashboard Sign In</h2>
+          </div>
+          <span class="card-icon" aria-hidden="true">
+            <i class="fa-solid fa-lock"></i>
+          </span>
+        </div>
+
+        <form class="admin-login-form" novalidate>
+          <label class="field">
+            <span>Username</span>
+            <input
+              type="text"
+              name="username"
+              autocomplete="username"
+              placeholder="admin"
+              required
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+            <input
+              type="password"
+              name="password"
+              autocomplete="current-password"
+              placeholder="Enter admin password"
+              required
+            />
+          </label>
+
+          <button class="primary-button" type="submit">
+            <span>Login</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <script src="js/admin-login.js"></script>
+  </body>
+</html>

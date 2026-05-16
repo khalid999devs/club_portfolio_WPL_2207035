@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | KUET Business and Entrepreneurship Club</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/admin.css" />
+  </head>
+  <body class="admin-dashboard-page">
+    <header class="admin-topbar dashboard-topbar" aria-label="Admin dashboard header">
+      <a class="brand-link" href="index.html#top" aria-label="Back to home">
+        <img
+          src="https://www.kbec-official.org/assets/kbeclogoDarkBG-BXKv6nqZ.svg"
+          alt="KUET Business and Entrepreneurship Club"
+          width="360"
+          height="80"
+        />
+      </a>
+
+      <nav class="dashboard-actions" aria-label="Dashboard actions">
+        <a class="pill-link" href="index.html#top">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
+          <span>Website</span>
+        </a>
+        <button class="pill-link logout-button" type="button">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+          <span>Logout</span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="dashboard-shell">
+      <section class="dashboard-hero" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">KBEC Admin</p>
+          <h1 id="dashboard-title">Registration Dashboard</h1>
+          <p class="dashboard-copy">
+            Track submitted member applications and quickly review the details
+            needed for recruitment decisions.
+          </p>
+        </div>
+
+        <div class="admin-chip" aria-live="polite">
+          <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+          <span class="admin-name">Checking session...</span>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="Registration summary">
+        <article class="stat-card">
+          <span>Total</span>
+          <strong data-stat="total">0</strong>
+          <small>applications received</small>
+        </article>
+        <article class="stat-card">
+          <span>Today</span>
+          <strong data-stat="today">0</strong>
+          <small>new submissions</small>
+        </article>
+        <article class="stat-card">
+          <span>Last 7 days</span>
+          <strong data-stat="week">0</strong>
+          <small>recent applications</small>
+        </article>
+      </section>
+
+      <section class="data-panel" aria-labelledby="registrations-title">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Applications</p>
+            <h2 id="registrations-title">Registration Members</h2>
+          </div>
+          <button class="refresh-button" type="button">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        <div class="filters" aria-label="Dashboard filters">
+          <label class="search-field">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input
+              type="search"
+              class="search-input"
+              placeholder="Search by name, roll, email, department..."
+            />
+          </label>
+
+          <label class="filter-field">
+            <span>Wing</span>
+            <select class="wing-filter">
+              <option value="">All wings</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>Level</span>
+            <select class="level-filter">
+              <option value="">All levels</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="table-status" role="status" aria-live="polite">Loading registrations...</p>
+
+        <div class="table-wrap">
+          <table class="registrations-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Roll</th>
+                <th>Department</th>
+                <th>Level</th>
+                <th>Preferred Wing</th>
+                <th>Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <aside class="detail-drawer" aria-hidden="true" aria-labelledby="detail-title">
+      <div class="drawer-card" role="dialog" aria-modal="true">
+        <button class="drawer-close" type="button" aria-label="Close details">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+
+        <p class="eyebrow">Applicant Details</p>
+        <h2 id="detail-title">Application</h2>
+        <div class="drawer-content"></div>
+      </div>
+    </aside>
+
+    <script src="js/admin-dashboard.js"></script>
+  </body>
+</html>

@@ -24,3 +24,16 @@ CREATE TABLE IF NOT EXISTS registrations (
   INDEX idx_registrations_email (email),
   INDEX idx_registrations_submitted_at_utc (submitted_at_utc)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS admin_users (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username VARCHAR(80) NOT NULL,
+  display_name VARCHAR(120) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at_utc TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login_at_utc TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_admin_users_username (username),
+  INDEX idx_admin_users_is_active (is_active)
+) ENGINE=InnoDB;
