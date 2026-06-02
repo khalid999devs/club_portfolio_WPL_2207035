@@ -59,7 +59,6 @@ body {
   padding:
     clamp(8rem, 14vh, 9rem) var(--container-x)
     clamp(2rem, 4vh, 3.25rem);
-  isolation: isolate;
   background: #030303;
 }
 
@@ -105,6 +104,7 @@ body {
 
 .hero-topbar {
   position: fixed;
+  z-index: 10000;
   top: var(--container-y);
   left: var(--container-x);
   right: var(--container-x);
@@ -115,36 +115,50 @@ body {
   padding: 0;
   border-bottom: 1px solid transparent;
   background: transparent;
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
   transition:
-    top 0.28s ease,
-    left 0.28s ease,
-    right 0.28s ease,
-    padding 0.28s ease,
-    background 0.28s ease,
-    border-color 0.28s ease,
-    box-shadow 0.28s ease;
+    top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    right 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    opacity 0.32s ease,
+    transform 0.54s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero-topbar.is-scrolled {
   top: 0;
   left: 0;
   right: 0;
-  padding:
-    clamp(0.7rem, 1.5vw, 1.05rem) var(--container-x)
-    clamp(1.1rem, 2.2vw, 1.75rem);
+  padding: clamp(0.55rem, 1vw, 0.82rem) var(--container-x);
   background:
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.96) 0%,
-      rgba(0, 0, 0, 0.74) 54%,
-      rgba(0, 0, 0, 0) 100%
+      rgba(3, 3, 3, 0.98) 0%,
+      rgba(3, 3, 3, 0.94) 72%,
+      rgba(3, 3, 3, 0.84) 100%
     );
-  border-color: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 1.1rem 3.5rem rgba(0, 0, 0, 0.18);
+  background-color: rgba(3, 3, 3, 0.96);
+  border-color: rgba(255, 255, 255, 0.075);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1.1rem 3.5rem rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+.hero-topbar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, calc(-100% - 1.8rem), 0);
 }
 
 .hero-topbar.is-scrolled + .site-menu {
-  top: clamp(4.2rem, 5vw, 5.2rem);
+  top: clamp(3.8rem, 4.4vw, 4.7rem);
 }
 
 .club-logo {
@@ -363,7 +377,7 @@ body {
   position: fixed;
   top: calc(var(--container-y) + 3.5rem);
   right: var(--container-x);
-  z-index: 3;
+  z-index: 10010;
   display: grid;
   gap: 0.15rem;
   width: min(24rem, calc(100vw - (var(--container-x) * 2)));

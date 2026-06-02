@@ -1,4 +1,5 @@
 const heroVideo = document.querySelector('.hero-video');
+const heroSection = document.querySelector('.hero');
 const heroTopbar = document.querySelector('.hero-topbar');
 const soundToggle = document.querySelector('.sound-toggle');
 const menuButton = document.querySelector('.menu-button');
@@ -41,6 +42,10 @@ if (heroVideo && soundToggle) {
 function setMenuOpen(isOpen) {
   if (!menuButton || !siteMenu || !menuLabel) {
     return;
+  }
+
+  if (isOpen) {
+    heroTopbar?.classList.remove('is-hidden');
   }
 
   siteMenu.classList.toggle('is-open', isOpen);
@@ -99,17 +104,59 @@ if (backToTop) {
   window.addEventListener('resize', updateBackToTop);
 }
 
+let previousTopbarScrollY = window.scrollY;
+let topbarTicking = false;
+const scrollDirectionTolerance = 2;
+
 function updateTopbarState() {
   if (!heroTopbar) {
     return;
   }
 
-  const threshold = Math.max(160, window.innerHeight * 0.18);
-  heroTopbar.classList.toggle('is-scrolled', window.scrollY > threshold);
+  const currentScrollY = Math.max(window.scrollY, 0);
+  const backgroundThreshold = Math.max(170, window.innerHeight * 0.18);
+  const scrollDelta = currentScrollY - previousTopbarScrollY;
+  const menuIsOpen = siteMenu?.classList.contains('is-open');
+  const topbarHasFocus = heroTopbar.contains(document.activeElement);
+  const heroBottom = heroSection?.getBoundingClientRect().bottom ?? 0;
+  const heroHasPassedTopbar = heroBottom <= heroTopbar.offsetHeight + 18;
+
+  heroTopbar.classList.toggle(
+    'is-scrolled',
+    currentScrollY > backgroundThreshold || heroHasPassedTopbar,
+  );
+
+  if (currentScrollY <= 0 || menuIsOpen || topbarHasFocus) {
+    heroTopbar.classList.remove('is-hidden');
+  } else if (scrollDelta > scrollDirectionTolerance) {
+    heroTopbar.classList.add('is-hidden');
+  } else if (scrollDelta < -scrollDirectionTolerance) {
+    heroTopbar.classList.remove('is-hidden');
+  }
+
+  previousTopbarScrollY = currentScrollY;
+  topbarTicking = false;
+}
+
+function requestTopbarUpdate() {
+  if (topbarTicking) {
+    return;
+  }
+
+  topbarTicking = true;
+  window.requestAnimationFrame(updateTopbarState);
 }
 
 if (heroTopbar) {
   updateTopbarState();
-  window.addEventListener('scroll', updateTopbarState, { passive: true });
+  window.addEventListener('scroll', requestTopbarUpdate, { passive: true });
   window.addEventListener('resize', updateTopbarState);
+  window.addEventListener('hashchange', () => {
+    window.requestAnimationFrame(updateTopbarState);
+  });
+  window.addEventListener('load', () => {
+    updateTopbarState();
+    window.setTimeout(updateTopbarState, 120);
+  });
+  window.addEventListener('pageshow', updateTopbarState);
 }
