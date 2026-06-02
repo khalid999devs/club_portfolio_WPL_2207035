@@ -4,8 +4,17 @@ const motivation = document.querySelector('textarea[name="motivation"]');
 const charCount = document.querySelector('.char-count');
 const submitButton = form?.querySelector('button[type="submit"]');
 
+function getApiBaseUrl() {
+  if (window.KBEC_API_BASE_URL) {
+    return window.KBEC_API_BASE_URL;
+  }
+
+  const hostname = window.location.hostname || 'localhost';
+  return `http://${hostname}:5000`;
+}
+
 const registrationEndpoint =
-  window.KBEC_API_URL || 'http://localhost:5000/api/registrations';
+  window.KBEC_API_URL || `${getApiBaseUrl()}/api/registrations`;
 
 function updateCharacterCount() {
   if (!motivation || !charCount) {

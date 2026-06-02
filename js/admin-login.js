@@ -1,4 +1,13 @@
-const apiBase = window.KBEC_API_BASE_URL || 'http://localhost:5000';
+function getApiBaseUrl() {
+  if (window.KBEC_API_BASE_URL) {
+    return window.KBEC_API_BASE_URL;
+  }
+
+  const hostname = window.location.hostname || 'localhost';
+  return `http://${hostname}:5000`;
+}
+
+const apiBase = getApiBaseUrl();
 const loginForm = document.querySelector('.admin-login-form');
 const statusMessage = document.querySelector('.form-status');
 const submitButton = loginForm?.querySelector('button[type="submit"]');
