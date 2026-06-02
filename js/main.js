@@ -21,6 +21,11 @@ function updateSoundButton() {
   );
 }
 
+if (!heroVideo && soundToggle) {
+  soundToggle.hidden = true;
+  soundToggle.setAttribute('aria-hidden', 'true');
+}
+
 if (heroVideo && soundToggle) {
   updateSoundButton();
 

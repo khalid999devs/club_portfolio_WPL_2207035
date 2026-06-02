@@ -14,32 +14,13 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="styles/site-layout.css" />
     <link rel="stylesheet" href="styles/register.css" />
   </head>
   <body>
-    <header class="register-topbar" aria-label="Registration page header">
-      <a class="brand-link" href="index.html#top" aria-label="Back to home">
-        <img
-          src="https://www.kbec-official.org/assets/kbeclogoDarkBG-BXKv6nqZ.svg"
-          alt="KUET Business and Entrepreneurship Club"
-          width="360"
-          height="80"
-        />
-      </a>
+    <div data-site-header></div>
 
-      <nav class="page-actions" aria-label="Registration navigation">
-        <a class="ghost-link" href="index.html#about">
-          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-          <span>Back</span>
-        </a>
-        <a class="home-link" href="index.html#top">
-          <span>Home</span>
-          <i class="fa-solid fa-house" aria-hidden="true"></i>
-        </a>
-      </nav>
-    </header>
-
-    <main class="register-page">
+    <main class="register-page" id="top">
       <section class="register-hero" aria-labelledby="register-title">
         <div class="intro-panel">
           <p class="eyebrow">Membership Registration</p>
@@ -68,7 +49,11 @@
           </div>
         </div>
 
-        <section class="form-card" aria-labelledby="form-title">
+        <section
+          class="form-card"
+          id="registration-form"
+          aria-labelledby="form-title"
+        >
           <div class="form-head">
             <div>
               <p class="form-kicker">Apply Now</p>
@@ -232,6 +217,10 @@
       </section>
     </main>
 
+    <div data-site-footer></div>
+
+    <script src="js/site-layout.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/register.js"></script>
   </body>
 </html>

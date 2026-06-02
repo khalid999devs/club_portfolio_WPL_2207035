@@ -67,102 +67,6 @@ button {
   cursor: pointer;
 }
 
-.register-topbar {
-  position: fixed;
-  top: var(--container-y);
-  left: var(--container-x);
-  right: var(--container-x);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.brand-link {
-  display: inline-flex;
-  width: clamp(12.8rem, 17.6vw, 18.6rem);
-  max-width: 48vw;
-  filter: drop-shadow(0 0.25rem 1rem rgba(0, 0, 0, 0.7));
-}
-
-.brand-link img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.page-actions {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.5rem, 0.9vw, 0.75rem);
-}
-
-.ghost-link,
-.home-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  min-height: clamp(2.75rem, 3.15vw, 3.45rem);
-  padding: 0.65rem clamp(0.9rem, 1.25vw, 1.35rem);
-  border-radius: 999px;
-  text-decoration: none;
-  font-size: clamp(0.72rem, 0.84vw, 0.95rem);
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  backdrop-filter: blur(18px) saturate(135%);
-  -webkit-backdrop-filter: blur(18px) saturate(135%);
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.ghost-link {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-.home-link {
-  color: rgba(13, 13, 13, 0.94);
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(255, 255, 255, 0.78)
-    );
-  border: 1px solid rgba(255, 255, 255, 0.72);
-}
-
-.ghost-link:hover,
-.ghost-link:focus-visible,
-.home-link:hover,
-.home-link:focus-visible {
-  transform: translateY(-1px);
-  box-shadow: 0 1rem 2.4rem rgba(0, 0, 0, 0.32);
-}
-
-.home-link:hover,
-.home-link:focus-visible {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 1),
-      rgba(244, 217, 131, 0.9)
-    );
-  border-color: rgba(244, 217, 131, 0.72);
-}
-
-.ghost-link:focus-visible,
-.home-link:focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 4px;
-}
-
 .register-page {
   min-height: 100vh;
   padding:
@@ -524,26 +428,6 @@ button {
     --container-y: clamp(0.75rem, 3vw, 1rem);
   }
 
-  .register-topbar {
-    align-items: flex-start;
-  }
-
-  .brand-link {
-    width: min(42vw, 10.75rem);
-  }
-
-  .page-actions {
-    gap: 0.35rem;
-  }
-
-  .ghost-link,
-  .home-link {
-    min-height: 2.25rem;
-    padding: 0.48rem 0.64rem;
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-  }
-
   .register-page {
     padding-top: clamp(6.8rem, 14vh, 8rem);
   }
@@ -572,18 +456,6 @@ button {
 }
 
 @media (max-width: 420px) {
-  .brand-link {
-    width: min(39vw, 9rem);
-  }
-
-  .ghost-link span {
-    display: none;
-  }
-
-  .home-link {
-    gap: 0.45rem;
-  }
-
   .field input,
   .field select,
   .field textarea {
