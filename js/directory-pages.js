@@ -5,6 +5,15 @@ const OFFICIAL_SITE = 'https://www.kbec-official.org';
 const EVENT_PLACEHOLDER =
   'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1400&q=80';
 
+function getLocalApiBaseUrl() {
+  if (window.KBEC_API_BASE_URL) {
+    return window.KBEC_API_BASE_URL;
+  }
+
+  const hostname = window.location.hostname || 'localhost';
+  return `http://${hostname}:5000`;
+}
+
 const fallbackEvents = [
   {
     name: 'TEDXKUET 2026',
@@ -278,7 +287,8 @@ const fallbackAlumni = [
 
 const pageConfigs = {
   events: {
-    endpoint: `${API_BASE}/api/events`,
+    endpoints: [`${getLocalApiBaseUrl()}/api/events`, `${API_BASE}/api/events`],
+    mergeSources: true,
     fallback: fallbackEvents,
     render: renderEvents,
   },
@@ -296,6 +306,45 @@ const pageConfigs = {
 
 function cleanText(value) {
   return String(value ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function getCountLabel(value, singular, plural) {
+  if (Array.isArray(value)) {
+    return value.length > 0 ? `${value.length} ${value.length === 1 ? singular : plural}` : '';
+  }
+
+  if (typeof value === 'number') {
+    return value > 0 ? `${value} ${value === 1 ? singular : plural}` : '';
+  }
+
+  const text = cleanText(value);
+
+  if (!text) {
+    return '';
+  }
+
+  if (/^\d+$/.test(text)) {
+    return `${text} ${text === '1' ? singular : plural}`;
+  }
+
+  return text.toLowerCase().includes(singular) || text.toLowerCase().includes(plural)
+    ? text
+    : `${text} ${plural}`;
+}
+
+function getTimelinePreview(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => ({
+      label: cleanText(item.label || item.title || item.name),
+      detail: cleanText(item.detail || item.description),
+      date: cleanText(item.timelineDate || item.date),
+    }))
+    .filter((item) => item.label)
+    .slice(0, 3);
 }
 
 function escapeHtml(value) {
@@ -322,6 +371,25 @@ function toArray(payload) {
   }
 
   return [];
+}
+
+function mergeDirectoryItems(items) {
+  const seen = new Set();
+
+  return items.filter((item) => {
+    const key = cleanText(
+      item.slug ||
+        item.slugId ||
+        `${item.name || item.title}-${item.date || item.eventDate || item.year}`,
+    ).toLowerCase();
+
+    if (!key || seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
 }
 
 function assetUrl(value, fallback = EVENT_PLACEHOLDER) {
@@ -531,16 +599,17 @@ function renderEvents(items) {
       .map((event) => {
         const name = cleanText(event.name);
         const year = getEventYear(event);
-        const date = cleanText(event.date) || year;
+        const date = cleanText(event.date || event.eventDate) || year;
         const venue = cleanText(event.venue);
-        const attendees = cleanText(event.attendees);
-        const speakers = cleanText(event.speakers);
+        const attendees = getCountLabel(event.attendees, 'attendee', 'attendees');
+        const speakers = getCountLabel(event.speakers, 'speaker', 'speakers');
         const tagline = cleanText(event.tagline || event.title);
         const about = cleanText(event.about || event.description);
         const aboutPreview =
           about.length > 360 ? `${about.slice(0, 360)}...` : about;
-        const image = assetUrl(event.image || event.thumbnail || event.cover);
+        const image = assetUrl(event.image || event.imageUrl || event.thumbnail || event.cover);
         const link = getEventLink(event);
+        const timeline = getTimelinePreview(event.timeline);
 
         return `
           <article class="event-card" data-card-filter="${escapeHtml(year)}">
@@ -558,9 +627,27 @@ function renderEvents(items) {
               }
               <div class="event-meta" aria-label="Event details">
                 ${venue ? `<span><i class="fa-solid fa-location-dot" aria-hidden="true"></i>${escapeHtml(venue)}</span>` : ''}
-                ${attendees ? `<span><i class="fa-solid fa-users" aria-hidden="true"></i>${escapeHtml(attendees)} attendees</span>` : ''}
-                ${speakers ? `<span><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>${escapeHtml(speakers)} speakers</span>` : ''}
+                ${attendees ? `<span><i class="fa-solid fa-users" aria-hidden="true"></i>${escapeHtml(attendees)}</span>` : ''}
+                ${speakers ? `<span><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i>${escapeHtml(speakers)}</span>` : ''}
               </div>
+              ${
+                timeline.length
+                  ? `
+                    <ol class="event-timeline-preview" aria-label="${escapeHtml(name)} timeline">
+                      ${timeline
+                        .map(
+                          (item) => `
+                            <li>
+                              <strong>${escapeHtml(item.label)}</strong>
+                              ${item.detail || item.date ? `<span>${escapeHtml([item.detail, item.date].filter(Boolean).join(' · '))}</span>` : ''}
+                            </li>
+                          `,
+                        )
+                        .join('')}
+                    </ol>
+                  `
+                  : ''
+              }
               <div class="event-actions">
                 <a href="${escapeHtml(link)}" target="_blank" rel="noreferrer">
                   View Details
@@ -673,17 +760,42 @@ function renderPeople(items) {
 }
 
 async function loadOfficialData(config) {
-  const response = await fetch(config.endpoint, {
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+  const endpoints = config.endpoints || [config.endpoint];
+  const mergedData = [];
+  let lastError;
 
-  if (!response.ok) {
-    throw new Error(`Request failed with ${response.status}`);
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with ${response.status}`);
+      }
+
+      const data = toArray(await response.json());
+
+      if (config.mergeSources) {
+        mergedData.push(...data);
+        continue;
+      }
+
+      if (data.length > 0 || endpoint === endpoints.at(-1)) {
+        return data;
+      }
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  return toArray(await response.json());
+  if (config.mergeSources && mergedData.length > 0) {
+    return mergeDirectoryItems(mergedData);
+  }
+
+  throw lastError || new Error('No data source available.');
 }
 
 async function initDirectoryPage() {

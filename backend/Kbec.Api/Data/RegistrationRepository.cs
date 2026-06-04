@@ -148,4 +148,105 @@ public sealed class RegistrationRepository(IConfiguration configuration)
             registrations.Count(registration => registration.SubmittedAtUtc >= weekStartUtc),
             registrations);
     }
+
+    public async Task<AdminRegistrationResponse?> UpdateAsync(
+        long id,
+        AdminRegistrationUpdateRequest request,
+        CancellationToken cancellationToken)
+    {
+        const string updateSql = """
+            UPDATE registrations
+            SET
+                full_name = @fullName,
+                roll = @roll,
+                email = @email,
+                phone = @phone,
+                department = @department,
+                academic_session = @academicSession,
+                current_level = @currentLevel,
+                preferred_wing = @preferredWing,
+                motivation = @motivation,
+                availability = @availability
+            WHERE id = @id;
+            """;
+
+        const string selectSql = """
+            SELECT
+                id,
+                full_name,
+                roll,
+                email,
+                phone,
+                department,
+                academic_session,
+                current_level,
+                preferred_wing,
+                motivation,
+                availability,
+                agreement_accepted,
+                ip_address,
+                submitted_at_utc
+            FROM registrations
+            WHERE id = @id
+            LIMIT 1;
+            """;
+
+        await using var connection = new MySqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        await using (var command = new MySqlCommand(updateSql, connection))
+        {
+            command.Parameters.AddWithValue("@id", id);
+            command.Parameters.AddWithValue("@fullName", request.FullName.Trim());
+            command.Parameters.AddWithValue("@roll", request.Roll.Trim());
+            command.Parameters.AddWithValue("@email", request.Email.Trim().ToLowerInvariant());
+            command.Parameters.AddWithValue("@phone", request.Phone.Trim());
+            command.Parameters.AddWithValue("@department", request.Department.Trim());
+            command.Parameters.AddWithValue("@academicSession", request.AcademicSession.Trim());
+            command.Parameters.AddWithValue("@currentLevel", request.CurrentLevel.Trim());
+            command.Parameters.AddWithValue("@preferredWing", request.PreferredWing.Trim());
+            command.Parameters.AddWithValue("@motivation", request.Motivation.Trim());
+            command.Parameters.AddWithValue("@availability", request.Availability.Trim());
+
+            var affectedRows = await command.ExecuteNonQueryAsync(cancellationToken);
+
+            if (affectedRows == 0)
+            {
+                return null;
+            }
+        }
+
+        await using var selectCommand = new MySqlCommand(selectSql, connection);
+        selectCommand.Parameters.AddWithValue("@id", id);
+        await using var reader = await selectCommand.ExecuteReaderAsync(cancellationToken);
+
+        return await reader.ReadAsync(cancellationToken)
+            ? ReadRegistration(reader)
+            : null;
+    }
+
+    private static AdminRegistrationResponse ReadRegistration(MySqlDataReader reader)
+    {
+        var submittedAtUtc = DateTime.SpecifyKind(
+            reader.GetDateTime(reader.GetOrdinal("submitted_at_utc")),
+            DateTimeKind.Utc);
+
+        var ipAddressOrdinal = reader.GetOrdinal("ip_address");
+
+        return new AdminRegistrationResponse(
+            reader.GetInt64(reader.GetOrdinal("id")),
+            reader.GetString(reader.GetOrdinal("full_name")),
+            reader.GetString(reader.GetOrdinal("roll")),
+            reader.GetString(reader.GetOrdinal("email")),
+            reader.GetString(reader.GetOrdinal("phone")),
+            reader.GetString(reader.GetOrdinal("department")),
+            reader.GetString(reader.GetOrdinal("academic_session")),
+            reader.GetString(reader.GetOrdinal("current_level")),
+            reader.GetString(reader.GetOrdinal("preferred_wing")),
+            reader.GetString(reader.GetOrdinal("motivation")),
+            reader.GetString(reader.GetOrdinal("availability")),
+            reader.GetBoolean(reader.GetOrdinal("agreement_accepted")),
+            reader.IsDBNull(ipAddressOrdinal) ? null : reader.GetString(ipAddressOrdinal),
+            submittedAtUtc);
+    }
 }

@@ -46,6 +46,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddSingleton<RegistrationRepository>();
 builder.Services.AddSingleton<AdminRepository>();
+builder.Services.AddSingleton<EventRepository>();
 builder.Services.AddSingleton<PasswordHasher>();
 
 var app = builder.Build();
@@ -66,6 +67,29 @@ app.MapGet("/api/health", () => Results.Ok(new
     status = "healthy",
     checkedAtUtc = DateTime.UtcNow
 }));
+
+app.MapGet(
+    "/api/events",
+    async (
+        EventRepository repository,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        try
+        {
+            var events = await repository.GetEventsAsync(true, cancellationToken);
+            return Results.Ok(events);
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while loading public events.");
+
+            return Results.Problem(
+                title: "Event database unavailable",
+                detail: "Events could not be loaded right now.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
 
 app.MapPost(
     "/api/registrations",
@@ -195,6 +219,233 @@ app.MapGet(
 
             return Results.Problem(
                 title: "Registration database unavailable",
+                detail: "Run the latest schema.sql file and try again.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapPut(
+    "/api/admin/registrations/{id:long}",
+    async (
+        long id,
+        AdminRegistrationUpdateRequest request,
+        RegistrationRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out _))
+        {
+            return Results.Unauthorized();
+        }
+
+        var validationErrors = request.Validate();
+
+        if (validationErrors.Count > 0)
+        {
+            return Results.ValidationProblem(validationErrors);
+        }
+
+        try
+        {
+            var registration = await repository.UpdateAsync(id, request, cancellationToken);
+
+            return registration is null
+                ? Results.NotFound(new { message = "Registration was not found." })
+                : Results.Ok(registration);
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while updating a registration.");
+
+            return Results.Problem(
+                title: "Registration database unavailable",
+                detail: "The registration could not be updated right now.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapPost(
+    "/api/admin/change-password",
+    async (
+        AdminChangePasswordRequest request,
+        AdminRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out var admin) || admin is null)
+        {
+            return Results.Unauthorized();
+        }
+
+        var validationErrors = request.Validate();
+
+        if (validationErrors.Count > 0)
+        {
+            return Results.ValidationProblem(validationErrors);
+        }
+
+        try
+        {
+            var changed = await repository.ChangePasswordAsync(
+                admin.Id,
+                request,
+                cancellationToken);
+
+            return changed
+                ? Results.NoContent()
+                : Results.ValidationProblem(new Dictionary<string, string[]>
+                {
+                    [nameof(AdminChangePasswordRequest.CurrentPassword)] =
+                        ["Current password is not correct."]
+                });
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while changing an admin password.");
+
+            return Results.Problem(
+                title: "Admin database unavailable",
+                detail: "The password could not be updated right now.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapGet(
+    "/api/admin/users",
+    async (
+        AdminRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out _))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var admins = await repository.ListAsync(cancellationToken);
+            return Results.Ok(new { admins });
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while loading admin users.");
+
+            return Results.Problem(
+                title: "Admin database unavailable",
+                detail: "Admin users could not be loaded right now.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapPost(
+    "/api/admin/users",
+    async (
+        AdminCreateUserRequest request,
+        AdminRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out _))
+        {
+            return Results.Unauthorized();
+        }
+
+        var validationErrors = request.Validate();
+
+        if (validationErrors.Count > 0)
+        {
+            return Results.ValidationProblem(validationErrors);
+        }
+
+        try
+        {
+            var admin = await repository.CreateAsync(request, cancellationToken);
+
+            return admin is null
+                ? Results.Conflict(new { message = "Username already exists." })
+                : Results.Created($"/api/admin/users/{admin.Id}", admin);
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while creating an admin user.");
+
+            return Results.Problem(
+                title: "Admin database unavailable",
+                detail: "The admin user could not be created right now.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapGet(
+    "/api/admin/events",
+    async (
+        EventRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out _))
+        {
+            return Results.Unauthorized();
+        }
+
+        try
+        {
+            var events = await repository.GetAdminEventsAsync(cancellationToken);
+            return Results.Ok(events);
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while loading admin events.");
+
+            return Results.Problem(
+                title: "Event database unavailable",
+                detail: "Run the latest schema.sql file and try again.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+    });
+
+app.MapPost(
+    "/api/admin/events",
+    async (
+        AdminEventRequest request,
+        EventRepository repository,
+        HttpContext httpContext,
+        ILogger<Program> logger,
+        CancellationToken cancellationToken) =>
+    {
+        if (!TryGetAdminSession(httpContext, out var admin) || admin is null)
+        {
+            return Results.Unauthorized();
+        }
+
+        var validationErrors = request.Validate();
+
+        if (validationErrors.Count > 0)
+        {
+            return Results.ValidationProblem(validationErrors);
+        }
+
+        try
+        {
+            var created = await repository.CreateAsync(
+                request,
+                admin.Id,
+                cancellationToken);
+
+            return Results.Created($"/api/admin/events/{created.Id}", created);
+        }
+        catch (MySqlException exception)
+        {
+            logger.LogError(exception, "MySQL failed while creating an event.");
+
+            return Results.Problem(
+                title: "Event database unavailable",
                 detail: "Run the latest schema.sql file and try again.",
                 statusCode: StatusCodes.Status503ServiceUnavailable);
         }

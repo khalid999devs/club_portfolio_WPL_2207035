@@ -37,6 +37,10 @@
             <i class="fa-solid fa-users" aria-hidden="true"></i>
             <span>Registrations</span>
           </button>
+          <button class="sidebar-link" type="button" data-admin-view="events">
+            <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+            <span>Events</span>
+          </button>
           <button class="sidebar-link" type="button" data-admin-view="settings">
             <i class="fa-solid fa-gear" aria-hidden="true"></i>
             <span>Settings</span>
@@ -56,18 +60,6 @@
       </aside>
 
       <main class="admin-main">
-        <header class="admin-panel-top">
-          <div>
-            <p class="eyebrow">KBEC Admin Panel</p>
-            <h1 class="page-title" data-page-title>Dashboard</h1>
-          </div>
-
-          <div class="admin-chip" aria-live="polite">
-            <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
-            <span class="admin-name">Checking session...</span>
-          </div>
-        </header>
-
         <section
           class="admin-view is-active"
           data-admin-panel="dashboard"
@@ -75,10 +67,10 @@
         >
           <div class="section-head">
             <div>
-              <h2 id="dashboard-title">Overview</h2>
+              <h2 id="dashboard-title">Dashboard</h2>
               <p>High-level registration activity and latest applications.</p>
             </div>
-            <button class="refresh-button" type="button">
+            <button class="refresh-button" type="button" data-refresh-target="dashboard">
               <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
               <span>Refresh</span>
             </button>
@@ -141,13 +133,18 @@
           <section class="data-panel">
             <div class="panel-head">
               <div>
-                <p class="eyebrow">Applications</p>
                 <h2 id="registrations-title">Registration Members</h2>
               </div>
-              <button class="refresh-button" type="button">
-                <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
-                <span>Refresh</span>
-              </button>
+              <div class="panel-actions">
+                <button class="refresh-button export-csv-button" type="button">
+                  <i class="fa-solid fa-file-csv" aria-hidden="true"></i>
+                  <span>Export CSV</span>
+                </button>
+                <button class="refresh-button" type="button" data-refresh-target="registrations">
+                  <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                  <span>Refresh</span>
+                </button>
+              </div>
             </div>
 
             <div class="filters" aria-label="Dashboard filters">
@@ -192,13 +189,11 @@
               <table class="registrations-table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Roll</th>
-                    <th>Department</th>
-                    <th>Level</th>
-                    <th>Preferred Wing</th>
+                    <th>Member</th>
+                    <th>Academic</th>
+                    <th>Contact</th>
                     <th>Submitted</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody></tbody>
@@ -223,50 +218,206 @@
 
         <section
           class="admin-view"
+          data-admin-panel="events"
+          aria-labelledby="events-admin-title"
+        >
+          <section class="data-panel events-admin-panel">
+            <div class="panel-head">
+              <div>
+                <h2 id="events-admin-title">Events</h2>
+              </div>
+              <button class="refresh-button" type="button" data-refresh-target="events">
+                <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <div class="events-admin-grid">
+              <form class="event-form" aria-label="Create event form">
+                <div class="form-section-head">
+                  <div>
+                    <h3>Create Upcoming Event</h3>
+                    <p>Post event details that can appear on the public Events page.</p>
+                  </div>
+                </div>
+
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Event Name</span>
+                    <input name="name" type="text" placeholder="TEDxKUET 2026" required />
+                  </label>
+
+                  <label class="field">
+                    <span>Tagline</span>
+                    <input name="tagline" type="text" placeholder="Beyond the self you see" />
+                  </label>
+
+                  <label class="field">
+                    <span>Event Date</span>
+                    <input name="eventDate" type="date" />
+                  </label>
+
+                  <label class="field">
+                    <span>Registration Deadline</span>
+                    <input name="registrationDeadline" type="date" />
+                  </label>
+
+                  <label class="field">
+                    <span>Venue</span>
+                    <input name="venue" type="text" placeholder="KUET Auditorium" />
+                  </label>
+
+                  <label class="field">
+                    <span>Display Order</span>
+                    <input name="displayOrder" type="number" value="0" min="0" />
+                  </label>
+
+                  <label class="field form-grid-span">
+                    <span>Image URL</span>
+                    <input
+                      name="imageUrl"
+                      type="url"
+                      placeholder="https://www.kbec-official.org/assets/..."
+                    />
+                  </label>
+
+                  <label class="field form-grid-span">
+                    <span>Details Link</span>
+                    <input name="externalLink" type="url" placeholder="https://..." />
+                  </label>
+
+                  <label class="field form-grid-span">
+                    <span>Description</span>
+                    <textarea
+                      name="description"
+                      rows="5"
+                      placeholder="Write a short public description for the event."
+                      required
+                    ></textarea>
+                  </label>
+
+                  <label class="field form-grid-span">
+                    <span>Speakers</span>
+                    <textarea
+                      name="speakers"
+                      rows="4"
+                      placeholder="Name | Title | Organization"
+                    ></textarea>
+                  </label>
+
+                  <label class="field form-grid-span">
+                    <span>Timeline</span>
+                    <textarea
+                      name="timeline"
+                      rows="4"
+                      placeholder="Registration Opens | Applications start | 2026-01-10"
+                    ></textarea>
+                  </label>
+                </div>
+
+                <div class="event-options">
+                  <label class="checkbox-field">
+                    <input name="isUpcoming" type="checkbox" checked />
+                    <span>Upcoming</span>
+                  </label>
+                  <label class="checkbox-field">
+                    <input name="isPublished" type="checkbox" checked />
+                    <span>Published</span>
+                  </label>
+                </div>
+
+                <div class="event-form-footer">
+                  <p class="form-status event-status" aria-live="polite"></p>
+                  <button class="primary-button" type="submit">
+                    <span>Publish Event</span>
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </form>
+
+              <section class="admin-card event-list-card" aria-labelledby="event-list-title">
+                <div class="card-title-row">
+                  <div>
+                    <h3 id="event-list-title">Event Posts</h3>
+                    <p>Latest saved events from the local database.</p>
+                  </div>
+                  <span class="event-count" data-event-count>0 events</span>
+                </div>
+                <div class="event-list"></div>
+              </section>
+            </div>
+          </section>
+        </section>
+
+        <section
+          class="admin-view"
           data-admin-panel="settings"
           aria-labelledby="settings-title"
         >
           <div class="settings-grid">
             <section class="admin-card" aria-labelledby="settings-title">
-              <h2 id="settings-title">Settings</h2>
-              <p>
-                Basic system information for the local admin panel setup. More
-                controls can be added here later when the backend grows.
-              </p>
+              <h2 id="settings-title">Change Password</h2>
+              <p>Update the password for the currently signed-in admin account.</p>
 
-              <div class="settings-list">
-                <div>
-                  <span>API Base</span>
-                  <strong data-setting="apiBase">-</strong>
+              <form class="settings-form password-form">
+                <label class="field">
+                  <span>Current Password</span>
+                  <input name="currentPassword" type="password" autocomplete="current-password" required />
+                </label>
+                <label class="field">
+                  <span>New Password</span>
+                  <input name="newPassword" type="password" autocomplete="new-password" required />
+                </label>
+                <label class="field">
+                  <span>Confirm Password</span>
+                  <input name="confirmPassword" type="password" autocomplete="new-password" required />
+                </label>
+                <div class="settings-form-footer">
+                  <p class="form-status password-status" aria-live="polite"></p>
+                  <button class="primary-button" type="submit">
+                    <span>Update Password</span>
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                  </button>
                 </div>
-                <div>
-                  <span>Session</span>
-                  <strong>ASP.NET HTTP-only cookie</strong>
-                </div>
-                <div>
-                  <span>Database</span>
-                  <strong>MySQL / MAMP</strong>
-                </div>
-              </div>
+              </form>
             </section>
 
             <section class="admin-card" aria-labelledby="account-title">
-              <h2 id="account-title">Admin Account</h2>
-              <p>
-                The default account is seeded from backend app settings. For a
-                public deployment, replace the seed password before release.
-              </p>
+              <h2 id="account-title">Create Admin User</h2>
+              <p>Add another admin account for managing registrations and events.</p>
 
-              <div class="settings-list">
-                <div>
-                  <span>Signed in as</span>
-                  <strong class="settings-admin-name">Checking session...</strong>
+              <form class="settings-form admin-user-form">
+                <label class="field">
+                  <span>Display Name</span>
+                  <input name="displayName" type="text" placeholder="KBEC Moderator" required />
+                </label>
+                <label class="field">
+                  <span>Username</span>
+                  <input name="username" type="text" autocomplete="username" required />
+                </label>
+                <label class="field">
+                  <span>Password</span>
+                  <input name="password" type="password" autocomplete="new-password" required />
+                </label>
+                <div class="settings-form-footer">
+                  <p class="form-status admin-user-status" aria-live="polite"></p>
+                  <button class="primary-button" type="submit">
+                    <span>Create Admin</span>
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                  </button>
                 </div>
+              </form>
+            </section>
+
+            <section class="admin-card admin-users-card" aria-labelledby="admin-users-title">
+              <div class="card-title-row">
                 <div>
-                  <span>Security</span>
-                  <strong>PBKDF2 password hash</strong>
+                  <h2 id="admin-users-title">Current Admin Users</h2>
+                  <p>Accounts that can access this admin panel.</p>
                 </div>
+                <span class="event-count admin-count" data-admin-count>0 admins</span>
               </div>
+              <div class="admin-users-list" aria-live="polite"></div>
             </section>
           </div>
         </section>

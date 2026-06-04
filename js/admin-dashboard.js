@@ -8,12 +8,8 @@ function getApiBaseUrl() {
 }
 
 const apiBase = getApiBaseUrl();
-const pageTitle = document.querySelector('[data-page-title]');
 const navButtons = document.querySelectorAll('[data-admin-view]');
 const panels = document.querySelectorAll('[data-admin-panel]');
-const adminName = document.querySelector('.admin-name');
-const settingsAdminName = document.querySelector('.settings-admin-name');
-const apiBaseSetting = document.querySelector('[data-setting="apiBase"]');
 const logoutButton = document.querySelector('.logout-button');
 const refreshButtons = document.querySelectorAll('.refresh-button');
 const tableBody = document.querySelector('.registrations-table tbody');
@@ -31,19 +27,62 @@ const detailDrawer = document.querySelector('.detail-drawer');
 const drawerContent = document.querySelector('.drawer-content');
 const drawerTitle = document.querySelector('#detail-title');
 const drawerClose = document.querySelector('.drawer-close');
+const eventForm = document.querySelector('.event-form');
+const eventStatus = document.querySelector('.event-status');
+const eventList = document.querySelector('.event-list');
+const eventCount = document.querySelector('[data-event-count]');
+const exportCsvButton = document.querySelector('.export-csv-button');
+const passwordForm = document.querySelector('.password-form');
+const passwordStatus = document.querySelector('.password-status');
+const adminUserForm = document.querySelector('.admin-user-form');
+const adminUserStatus = document.querySelector('.admin-user-status');
+const adminUsersList = document.querySelector('.admin-users-list');
+const adminCount = document.querySelector('[data-admin-count]');
 
 let registrations = [];
+let events = [];
+let adminUsers = [];
 let currentPage = 1;
+let isAuthenticated = false;
+let eventsLoaded = false;
+let settingsLoaded = false;
 
-const viewLabels = {
-  dashboard: 'Dashboard',
-  registrations: 'Registrations',
-  settings: 'Settings',
+const adminViews = new Set(['dashboard', 'registrations', 'events', 'settings']);
+
+const registrationOptions = {
+  departments: [
+    'Architecture',
+    'Biomedical Engineering',
+    'Building Engineering and Construction Management',
+    'Chemical Engineering',
+    'Civil Engineering',
+    'Computer Science and Engineering',
+    'Electrical and Electronic Engineering',
+    'Electronics and Communication Engineering',
+    'Energy Science and Engineering',
+    'Industrial Engineering and Management',
+    'Leather Engineering',
+    'Materials Science and Engineering',
+    'Mechanical Engineering',
+    'Mechatronics Engineering',
+    'Textile Engineering',
+    'Urban and Regional Planning',
+  ],
+  levels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Postgraduate'],
+  wings: [
+    'Business Case and Competitions',
+    'Event Operations',
+    'Marketing and Sponsorship',
+    'Content and Creative',
+    'Finance and Documentation',
+    'Tech and Web',
+  ],
+  availability: [
+    { value: 'weekly', label: 'Weekly contribution' },
+    { value: 'events', label: 'Event-based contribution' },
+    { value: 'flexible', label: 'Flexible schedule' },
+  ],
 };
-
-if (apiBaseSetting) {
-  apiBaseSetting.textContent = apiBase;
-}
 
 function setTableStatus(message, isError = false) {
   if (!tableStatus) {
@@ -52,6 +91,24 @@ function setTableStatus(message, isError = false) {
 
   tableStatus.textContent = message;
   tableStatus.classList.toggle('is-error', isError);
+}
+
+function setEventStatus(message, isError = false) {
+  if (!eventStatus) {
+    return;
+  }
+
+  eventStatus.textContent = message;
+  eventStatus.classList.toggle('is-error', isError);
+}
+
+function setFormStatus(target, message, isError = false) {
+  if (!target) {
+    return;
+  }
+
+  target.textContent = message;
+  target.classList.toggle('is-error', isError);
 }
 
 function setStat(name, value) {
@@ -84,6 +141,23 @@ function createCell(text) {
   const cell = document.createElement('td');
   cell.textContent = text;
   return cell;
+}
+
+function createMetaBlock(primaryText, secondaryLines = []) {
+  const block = document.createElement('span');
+  const primary = document.createElement('strong');
+
+  block.className = 'table-meta-block';
+  primary.textContent = primaryText || '-';
+  block.append(primary);
+
+  secondaryLines.filter(Boolean).forEach((line) => {
+    const secondary = document.createElement('span');
+    secondary.textContent = line;
+    block.append(secondary);
+  });
+
+  return block;
 }
 
 function createTag(text) {
@@ -218,7 +292,7 @@ function renderTable() {
     const row = document.createElement('tr');
     const cell = document.createElement('td');
     cell.className = 'empty-state';
-    cell.colSpan = 7;
+    cell.colSpan = 5;
     cell.textContent = registrations.length === 0
       ? 'No registration submissions yet.'
       : 'No registrations matched the current filters.';
@@ -233,33 +307,44 @@ function renderTable() {
     const row = document.createElement('tr');
 
     const nameCell = document.createElement('td');
-    const nameBlock = document.createElement('span');
-    const name = document.createElement('strong');
-    const email = document.createElement('span');
+    nameCell.append(createMetaBlock(registration.fullName, [`Roll ${registration.roll}`]));
 
-    nameBlock.className = 'member-name';
-    name.textContent = registration.fullName;
-    email.textContent = registration.email;
-    nameBlock.append(name, email);
-    nameCell.append(nameBlock);
+    const academicCell = document.createElement('td');
+    academicCell.append(
+      createMetaBlock(registration.department, [
+        `${registration.currentLevel} · ${registration.academicSession}`,
+      ]),
+      createTag(registration.preferredWing),
+    );
 
-    const wingCell = document.createElement('td');
-    wingCell.append(createTag(registration.preferredWing));
+    const contactCell = document.createElement('td');
+    contactCell.append(createMetaBlock(registration.email, [registration.phone]));
 
     const actionCell = document.createElement('td');
+    const actionGroup = document.createElement('div');
     const viewButton = document.createElement('button');
-    viewButton.className = 'view-button';
+    const editButton = document.createElement('button');
+
+    actionGroup.className = 'icon-actions';
+    viewButton.className = 'icon-button';
     viewButton.type = 'button';
-    viewButton.textContent = 'View';
+    viewButton.setAttribute('aria-label', `View ${registration.fullName}`);
+    viewButton.innerHTML = '<i class="fa-solid fa-eye" aria-hidden="true"></i>';
     viewButton.addEventListener('click', () => openDrawer(registration));
-    actionCell.append(viewButton);
+
+    editButton.className = 'icon-button';
+    editButton.type = 'button';
+    editButton.setAttribute('aria-label', `Edit ${registration.fullName}`);
+    editButton.innerHTML = '<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>';
+    editButton.addEventListener('click', () => openEditDrawer(registration));
+
+    actionGroup.append(viewButton, editButton);
+    actionCell.append(actionGroup);
 
     row.append(
       nameCell,
-      createCell(registration.roll),
-      createCell(registration.department),
-      createCell(registration.currentLevel),
-      wingCell,
+      academicCell,
+      contactCell,
       createCell(formatDate(registration.submittedAtUtc)),
       actionCell,
     );
@@ -360,6 +445,321 @@ function renderDashboardCards() {
   renderWingBreakdown();
 }
 
+function getEventDateLabel(event) {
+  return event.date || event.eventDate || 'Date not set';
+}
+
+function getEventSpeakerCount(event) {
+  return Array.isArray(event.speakers) ? event.speakers.length : 0;
+}
+
+function getEventTimelineCount(event) {
+  return Array.isArray(event.timeline) ? event.timeline.length : 0;
+}
+
+function renderEventList() {
+  if (!eventList) {
+    return;
+  }
+
+  eventList.replaceChildren();
+
+  if (eventCount) {
+    eventCount.textContent = `${events.length} event${events.length === 1 ? '' : 's'}`;
+  }
+
+  if (events.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'panel-empty';
+    empty.textContent = 'No events have been posted yet.';
+    eventList.append(empty);
+    return;
+  }
+
+  events.forEach((event) => {
+    const item = document.createElement('article');
+    const top = document.createElement('div');
+    const titleWrap = document.createElement('div');
+    const title = document.createElement('h4');
+    const meta = document.createElement('p');
+    const status = document.createElement('span');
+    const details = document.createElement('div');
+
+    item.className = 'admin-event-card';
+    top.className = 'admin-event-top';
+    status.className = event.isPublished ? 'status-pill is-live' : 'status-pill';
+    details.className = 'admin-event-details';
+
+    title.textContent = event.name;
+    meta.textContent = [getEventDateLabel(event), event.venue]
+      .filter(Boolean)
+      .join(' · ');
+    status.textContent = event.isPublished ? 'Published' : 'Draft';
+
+    titleWrap.append(title, meta);
+    top.append(titleWrap, status);
+
+    [
+      ['Speakers', getEventSpeakerCount(event)],
+      ['Timeline', getEventTimelineCount(event)],
+      ['Order', event.order ?? event.displayOrder ?? 0],
+    ].forEach(([label, value]) => {
+      const detail = document.createElement('span');
+      detail.innerHTML = `<strong>${value}</strong>${label}`;
+      details.append(detail);
+    });
+
+    item.append(top, details);
+    eventList.append(item);
+  });
+}
+
+function formatOptionalDate(dateValue) {
+  return dateValue ? formatDate(dateValue) : 'Never';
+}
+
+function renderAdminUsers() {
+  if (!adminUsersList) {
+    return;
+  }
+
+  adminUsersList.replaceChildren();
+
+  if (adminCount) {
+    adminCount.textContent = `${adminUsers.length} admin${adminUsers.length === 1 ? '' : 's'}`;
+  }
+
+  if (adminUsers.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'panel-empty';
+    empty.textContent = 'No admin users found.';
+    adminUsersList.append(empty);
+    return;
+  }
+
+  adminUsers.forEach((admin) => {
+    const item = document.createElement('article');
+    const avatar = document.createElement('span');
+    const body = document.createElement('div');
+    const name = document.createElement('strong');
+    const username = document.createElement('span');
+    const meta = document.createElement('small');
+    const status = document.createElement('span');
+
+    item.className = 'admin-user-item';
+    avatar.className = 'admin-user-avatar';
+    body.className = 'admin-user-body';
+    status.className = admin.isActive ? 'status-pill is-live' : 'status-pill';
+
+    avatar.textContent = admin.displayName?.charAt(0) || 'A';
+    name.textContent = admin.displayName || admin.username;
+    username.textContent = `@${admin.username}`;
+    meta.textContent = `Created ${formatShortDate(admin.createdAtUtc)} · Last login ${formatOptionalDate(admin.lastLoginAtUtc)}`;
+    status.textContent = admin.isActive ? 'Active' : 'Disabled';
+
+    body.append(name, username, meta);
+    item.append(avatar, body, status);
+    adminUsersList.append(item);
+  });
+}
+
+async function loadAdminUsers() {
+  if (!adminUsersList) {
+    return;
+  }
+
+  adminUsersList.replaceChildren();
+
+  const loading = document.createElement('p');
+  loading.className = 'panel-empty';
+  loading.textContent = 'Loading admin users...';
+  adminUsersList.append(loading);
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/users`, {
+      credentials: 'include',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      adminUsersList.replaceChildren();
+      const error = document.createElement('p');
+      error.className = 'panel-empty is-error';
+      error.textContent = response.status === 404
+        ? 'Admin users endpoint was not found. Restart the ASP.NET backend.'
+        : errorBody?.detail || errorBody?.title || 'Could not load admin users right now.';
+      adminUsersList.append(error);
+      return;
+    }
+
+    const payload = await response.json();
+    adminUsers = payload.admins || [];
+    settingsLoaded = true;
+    renderAdminUsers();
+  } catch {
+    adminUsersList.replaceChildren();
+    const error = document.createElement('p');
+    error.className = 'panel-empty is-error';
+    error.textContent = 'Could not reach the ASP.NET API. Start the backend first.';
+    adminUsersList.append(error);
+  }
+}
+
+function parseStructuredLines(value, mapper) {
+  return String(value || '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => mapper(line.split('|').map((part) => part.trim()), index))
+    .filter(Boolean);
+}
+
+function parseSpeakers(value) {
+  return parseStructuredLines(value, ([name, title, organization], index) => {
+    if (!name) {
+      return null;
+    }
+
+    return {
+      name,
+      title: title || null,
+      organization: organization || null,
+      imageUrl: null,
+      displayOrder: index,
+    };
+  });
+}
+
+function parseTimeline(value) {
+  return parseStructuredLines(value, ([label, detail, timelineDate], index) => {
+    if (!label) {
+      return null;
+    }
+
+    return {
+      label,
+      detail: detail || null,
+      timelineDate: timelineDate || null,
+      displayOrder: index,
+    };
+  });
+}
+
+function getEventPayload(form) {
+  const formData = new FormData(form);
+
+  return {
+    name: String(formData.get('name') || '').trim(),
+    tagline: String(formData.get('tagline') || '').trim() || null,
+    eventDate: String(formData.get('eventDate') || '').trim() || null,
+    venue: String(formData.get('venue') || '').trim() || null,
+    registrationDeadline:
+      String(formData.get('registrationDeadline') || '').trim() || null,
+    imageUrl: String(formData.get('imageUrl') || '').trim() || null,
+    externalLink: String(formData.get('externalLink') || '').trim() || null,
+    description: String(formData.get('description') || '').trim(),
+    displayOrder: Number(formData.get('displayOrder')) || 0,
+    isUpcoming: formData.has('isUpcoming'),
+    isPublished: formData.has('isPublished'),
+    speakers: parseSpeakers(formData.get('speakers')),
+    timeline: parseTimeline(formData.get('timeline')),
+  };
+}
+
+async function loadEvents() {
+  if (!eventList) {
+    return;
+  }
+
+  setEventStatus('Loading events...');
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/events`, {
+      credentials: 'include',
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      setEventStatus(
+        errorBody?.detail || errorBody?.title || 'Could not load events right now.',
+        true,
+      );
+      return;
+    }
+
+    const payload = await response.json();
+    events = payload.events || [];
+    eventsLoaded = true;
+    renderEventList();
+    setEventStatus('Events are up to date.');
+  } catch {
+    setEventStatus('Could not reach the ASP.NET API. Start the backend first.', true);
+  }
+}
+
+async function submitEvent(event) {
+  event.preventDefault();
+
+  if (!eventForm) {
+    return;
+  }
+
+  const submitButton = eventForm.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+  setEventStatus('Saving event...');
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/events`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(getEventPayload(eventForm)),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      setEventStatus(
+        errorBody?.detail ||
+          errorBody?.title ||
+          'Check the event form and try again.',
+        true,
+      );
+      return;
+    }
+
+    eventForm.reset();
+    eventForm.elements.isUpcoming.checked = true;
+    eventForm.elements.isPublished.checked = true;
+    await loadEvents();
+    setEventStatus('Event posted successfully.');
+  } catch {
+    setEventStatus('Could not reach the ASP.NET API. Start the backend first.', true);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+  }
+}
+
 function createDetail(label, value, isParagraph = false) {
   const detail = document.createElement('div');
   const detailLabel = document.createElement('span');
@@ -373,11 +773,126 @@ function createDetail(label, value, isParagraph = false) {
   return detail;
 }
 
+function createEditField(label, name, value, options = {}) {
+  const field = document.createElement('label');
+  const labelText = document.createElement('span');
+  const control = options.choices
+    ? document.createElement('select')
+    : options.multiline
+      ? document.createElement('textarea')
+      : document.createElement('input');
+
+  field.className = 'field';
+  labelText.textContent = label;
+  control.name = name;
+  control.required = true;
+
+  if (options.choices) {
+    const values = options.choices.map((choice) =>
+      typeof choice === 'string' ? choice : choice.value,
+    );
+
+    options.choices.forEach((choice) => {
+      const option = document.createElement('option');
+
+      option.value = typeof choice === 'string' ? choice : choice.value;
+      option.textContent = typeof choice === 'string' ? choice : choice.label;
+      control.append(option);
+    });
+
+    if (value && !values.includes(value)) {
+      const currentOption = document.createElement('option');
+
+      currentOption.value = value;
+      currentOption.textContent = value;
+      control.append(currentOption);
+    }
+  } else if (options.multiline) {
+    control.rows = options.rows || 4;
+  } else {
+    control.type = options.type || 'text';
+  }
+
+  control.value = value || '';
+  field.append(labelText, control);
+  return field;
+}
+
+function getRegistrationPayload(form) {
+  const formData = new FormData(form);
+
+  return {
+    fullName: String(formData.get('fullName') || '').trim(),
+    roll: String(formData.get('roll') || '').trim(),
+    email: String(formData.get('email') || '').trim(),
+    phone: String(formData.get('phone') || '').trim(),
+    department: String(formData.get('department') || '').trim(),
+    academicSession: String(formData.get('academicSession') || '').trim(),
+    currentLevel: String(formData.get('currentLevel') || '').trim(),
+    preferredWing: String(formData.get('preferredWing') || '').trim(),
+    motivation: String(formData.get('motivation') || '').trim(),
+    availability: String(formData.get('availability') || '').trim(),
+  };
+}
+
+async function saveRegistration(registration, form, status) {
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  setFormStatus(status, 'Saving changes...');
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/registrations/${registration.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(getRegistrationPayload(form)),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      setFormStatus(
+        status,
+        errorBody?.detail || errorBody?.title || 'Could not update this registration.',
+        true,
+      );
+      return;
+    }
+
+    const updated = await response.json();
+    registrations = registrations.map((item) =>
+      item.id === updated.id ? updated : item,
+    );
+    syncFilters();
+    renderDashboardCards();
+    renderTable();
+    setFormStatus(status, 'Registration updated.');
+    openDrawer(updated);
+  } catch {
+    setFormStatus(status, 'Could not reach the ASP.NET API. Start the backend first.', true);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+  }
+}
+
 function openDrawer(registration) {
   if (!detailDrawer || !drawerContent || !drawerTitle) {
     return;
   }
 
+  detailDrawer.classList.remove('is-editing');
   drawerTitle.textContent = registration.fullName;
   drawerContent.replaceChildren(
     createDetail('Roll', registration.roll),
@@ -397,17 +912,91 @@ function openDrawer(registration) {
   drawerClose?.focus();
 }
 
+function openEditDrawer(registration) {
+  if (!detailDrawer || !drawerContent || !drawerTitle) {
+    return;
+  }
+
+  const form = document.createElement('form');
+  const intro = document.createElement('div');
+  const introName = document.createElement('strong');
+  const introMeta = document.createElement('span');
+  const grid = document.createElement('div');
+  const footer = document.createElement('div');
+  const status = document.createElement('p');
+  const cancelButton = document.createElement('button');
+  const saveButton = document.createElement('button');
+
+  detailDrawer.classList.add('is-editing');
+  drawerTitle.textContent = 'Edit Application';
+  form.className = 'drawer-form';
+  intro.className = 'edit-applicant-summary';
+  grid.className = 'drawer-form-grid';
+  footer.className = 'drawer-actions';
+  status.className = 'form-status drawer-status';
+  status.setAttribute('aria-live', 'polite');
+  introName.textContent = registration.fullName;
+  introMeta.textContent = `${registration.roll} · ${registration.department}`;
+  intro.append(introName, introMeta);
+
+  grid.append(
+    createEditField('Full Name', 'fullName', registration.fullName),
+    createEditField('Roll', 'roll', registration.roll),
+    createEditField('Email', 'email', registration.email, { type: 'email' }),
+    createEditField('Phone', 'phone', registration.phone),
+    createEditField('Department', 'department', registration.department, {
+      choices: registrationOptions.departments,
+    }),
+    createEditField('Academic Session', 'academicSession', registration.academicSession),
+    createEditField('Current Level', 'currentLevel', registration.currentLevel, {
+      choices: registrationOptions.levels,
+    }),
+    createEditField('Preferred Wing', 'preferredWing', registration.preferredWing, {
+      choices: registrationOptions.wings,
+    }),
+    createEditField('Availability', 'availability', registration.availability, {
+      choices: registrationOptions.availability,
+    }),
+    createEditField('Motivation', 'motivation', registration.motivation, {
+      multiline: true,
+      rows: 5,
+    }),
+  );
+
+  cancelButton.className = 'secondary-button';
+  cancelButton.type = 'button';
+  cancelButton.textContent = 'Cancel';
+  cancelButton.addEventListener('click', () => openDrawer(registration));
+
+  saveButton.className = 'primary-button';
+  saveButton.type = 'submit';
+  saveButton.innerHTML = '<span>Save Changes</span><i class="fa-solid fa-check" aria-hidden="true"></i>';
+
+  footer.append(status, cancelButton, saveButton);
+  form.append(intro, grid, footer);
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    saveRegistration(registration, form, status);
+  });
+
+  drawerContent.replaceChildren(form);
+  detailDrawer.classList.add('is-open');
+  detailDrawer.setAttribute('aria-hidden', 'false');
+  drawerClose?.focus();
+}
+
 function closeDrawer() {
   if (!detailDrawer) {
     return;
   }
 
   detailDrawer.classList.remove('is-open');
+  detailDrawer.classList.remove('is-editing');
   detailDrawer.setAttribute('aria-hidden', 'true');
 }
 
 function switchView(viewName) {
-  const view = viewLabels[viewName] ? viewName : 'dashboard';
+  const view = adminViews.has(viewName) ? viewName : 'dashboard';
 
   panels.forEach((panel) => {
     panel.classList.toggle('is-active', panel.dataset.adminPanel === view);
@@ -417,11 +1006,15 @@ function switchView(viewName) {
     button.classList.toggle('is-active', button.dataset.adminView === view);
   });
 
-  if (pageTitle) {
-    pageTitle.textContent = viewLabels[view];
+  window.location.hash = view;
+
+  if (isAuthenticated && view === 'events' && !eventsLoaded) {
+    loadEvents();
   }
 
-  window.location.hash = view;
+  if (isAuthenticated && view === 'settings' && !settingsLoaded) {
+    loadAdminUsers();
+  }
 }
 
 async function requireSession() {
@@ -435,16 +1028,7 @@ async function requireSession() {
       return false;
     }
 
-    const session = await response.json();
-    const label = session.displayName || session.username;
-
-    if (adminName) {
-      adminName.textContent = label;
-    }
-
-    if (settingsAdminName) {
-      settingsAdminName.textContent = label;
-    }
+    await response.json();
 
     return true;
   } catch {
@@ -503,6 +1087,185 @@ async function logout() {
   }
 }
 
+function escapeCsv(value) {
+  const text = String(value ?? '');
+
+  if (/[",\n]/.test(text)) {
+    return `"${text.replaceAll('"', '""')}"`;
+  }
+
+  return text;
+}
+
+function exportRegistrationsCsv() {
+  const rows = getFilteredRegistrations();
+  const headers = [
+    'Full Name',
+    'Roll',
+    'Email',
+    'Phone',
+    'Department',
+    'Academic Session',
+    'Current Level',
+    'Preferred Wing',
+    'Availability',
+    'Submitted At',
+  ];
+
+  const csvRows = [
+    headers,
+    ...rows.map((registration) => [
+      registration.fullName,
+      registration.roll,
+      registration.email,
+      registration.phone,
+      registration.department,
+      registration.academicSession,
+      registration.currentLevel,
+      registration.preferredWing,
+      registration.availability,
+      formatDate(registration.submittedAtUtc),
+    ]),
+  ];
+
+  const blob = new Blob(
+    [csvRows.map((row) => row.map(escapeCsv).join(',')).join('\n')],
+    { type: 'text/csv;charset=utf-8' },
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = `kbec-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function submitPasswordChange(event) {
+  event.preventDefault();
+
+  if (!passwordForm) {
+    return;
+  }
+
+  const formData = new FormData(passwordForm);
+  const newPassword = String(formData.get('newPassword') || '');
+  const confirmPassword = String(formData.get('confirmPassword') || '');
+
+  if (newPassword !== confirmPassword) {
+    setFormStatus(passwordStatus, 'New password and confirmation do not match.', true);
+    return;
+  }
+
+  const submitButton = passwordForm.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  setFormStatus(passwordStatus, 'Updating password...');
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        currentPassword: String(formData.get('currentPassword') || ''),
+        newPassword,
+      }),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      setFormStatus(
+        passwordStatus,
+        errorBody?.detail || errorBody?.title || 'Could not update password.',
+        true,
+      );
+      return;
+    }
+
+    passwordForm.reset();
+    setFormStatus(passwordStatus, 'Password updated.');
+  } catch {
+    setFormStatus(passwordStatus, 'Could not reach the ASP.NET API. Start the backend first.', true);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+  }
+}
+
+async function submitAdminUser(event) {
+  event.preventDefault();
+
+  if (!adminUserForm) {
+    return;
+  }
+
+  const formData = new FormData(adminUserForm);
+  const submitButton = adminUserForm.querySelector('button[type="submit"]');
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+  setFormStatus(adminUserStatus, 'Creating admin user...');
+
+  try {
+    const response = await fetch(`${apiBase}/api/admin/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        displayName: String(formData.get('displayName') || '').trim(),
+        username: String(formData.get('username') || '').trim(),
+        password: String(formData.get('password') || ''),
+      }),
+    });
+
+    if (response.status === 401) {
+      window.location.href = 'admin-login.html';
+      return;
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      setFormStatus(
+        adminUserStatus,
+        errorBody?.message ||
+          errorBody?.detail ||
+          errorBody?.title ||
+          'Could not create admin user.',
+        true,
+      );
+      return;
+    }
+
+    adminUserForm.reset();
+    await loadAdminUsers();
+    setFormStatus(adminUserStatus, 'Admin user created.');
+  } catch {
+    setFormStatus(adminUserStatus, 'Could not reach the ASP.NET API. Start the backend first.', true);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+  }
+}
+
 navButtons.forEach((button) => {
   button.addEventListener('click', () => {
     switchView(button.dataset.adminView);
@@ -534,10 +1297,23 @@ nextButton?.addEventListener('click', () => {
   renderTable();
 });
 refreshButtons.forEach((button) => {
-  button.addEventListener('click', loadDashboard);
+  button.addEventListener('click', () => {
+    const target = button.dataset.refreshTarget || window.location.hash.replace('#', '');
+
+    if (target === 'events') {
+      loadEvents();
+      return;
+    }
+
+    loadDashboard();
+  });
 });
 logoutButton?.addEventListener('click', logout);
 drawerClose?.addEventListener('click', closeDrawer);
+eventForm?.addEventListener('submit', submitEvent);
+exportCsvButton?.addEventListener('click', exportRegistrationsCsv);
+passwordForm?.addEventListener('submit', submitPasswordChange);
+adminUserForm?.addEventListener('submit', submitAdminUser);
 
 detailDrawer?.addEventListener('click', (event) => {
   if (event.target === detailDrawer) {
@@ -557,6 +1333,15 @@ document.addEventListener('keydown', (event) => {
   switchView(initialView);
 
   if (await requireSession()) {
+    isAuthenticated = true;
     await loadDashboard();
+
+    if (initialView === 'events') {
+      await loadEvents();
+    }
+
+    if (initialView === 'settings') {
+      await loadAdminUsers();
+    }
   }
 })();

@@ -389,6 +389,37 @@ img {
   line-height: 1.25;
 }
 
+.event-timeline-preview {
+  display: grid;
+  gap: 0.55rem;
+  margin: clamp(1rem, 1.5vw, 1.35rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-timeline-preview li {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.65rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 0.7rem;
+}
+
+.event-timeline-preview strong {
+  color: rgba(244, 217, 131, 0.9);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.event-timeline-preview span {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
 .event-actions {
   display: flex;
   flex-wrap: wrap;
