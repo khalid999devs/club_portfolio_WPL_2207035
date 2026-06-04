@@ -11,6 +11,14 @@ function sectionHref(id) {
   return isHomePage ? `#${id}` : `index.html#${id}`;
 }
 
+function pageHref(page) {
+  return sitePage === page ? '#top' : page;
+}
+
+function currentPageAttrs(page) {
+  return sitePage === page ? ' aria-current="page"' : '';
+}
+
 function registerHref() {
   return isRegisterPage ? '#registration-form' : 'register.html';
 }
@@ -71,12 +79,14 @@ function renderSiteHeader() {
     </nav>
 
     <div class="site-menu" id="site-menu" aria-hidden="true">
-      <a href="${sectionHref('top')}">Home</a>
+      <a href="${sectionHref('top')}"${isHomePage ? ' aria-current="page"' : ''}>Home</a>
       <a href="${sectionHref('about')}">About Us</a>
-      <a href="${sectionHref('events')}">Events</a>
+      <a href="${pageHref('events.html')}"${currentPageAttrs('events.html')}>Events</a>
       <a href="${sectionHref('sponsors')}">Sponsors</a>
       <a href="${sectionHref('hall-of-fame')}">Hall of Fame</a>
       <a href="${sectionHref('partners')}">Club Partners</a>
+      <a href="${pageHref('alumni.html')}"${currentPageAttrs('alumni.html')}>Alumni</a>
+      <a href="${pageHref('executive-panel.html')}"${currentPageAttrs('executive-panel.html')}>Executive Panel</a>
     </div>
   `;
 }
@@ -133,10 +143,12 @@ function renderSiteFooter() {
           <ul>
             <li><a href="${sectionHref('top')}">Home</a></li>
             <li><a href="${sectionHref('about')}">About Us</a></li>
-            <li><a href="${sectionHref('events')}">Events</a></li>
+            <li><a href="${pageHref('events.html')}"${currentPageAttrs('events.html')}>Events</a></li>
             <li><a href="${sectionHref('hall-of-fame')}">Hall of Fame</a></li>
             <li><a href="${sectionHref('sponsors')}">Sponsors</a></li>
             <li><a href="${sectionHref('partners')}">Club Partners</a></li>
+            <li><a href="${pageHref('alumni.html')}"${currentPageAttrs('alumni.html')}>Alumni</a></li>
+            <li><a href="${pageHref('executive-panel.html')}"${currentPageAttrs('executive-panel.html')}>Executive Panel</a></li>
           </ul>
         </nav>
 

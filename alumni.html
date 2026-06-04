@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alumni | KUET Business and Entrepreneurship Club</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/site-layout.css" />
+    <link rel="stylesheet" href="styles/directory-pages.css" />
+  </head>
+  <body>
+    <div data-site-header></div>
+
+    <main class="directory-page" id="top" data-directory-page="alumni">
+      <section class="directory-hero" aria-labelledby="directory-title">
+        <div>
+          <p class="directory-kicker">KBEC Legacy</p>
+          <h1 class="directory-title" id="directory-title">Alumni</h1>
+          <p class="directory-copy">
+            Meet the past executive panels whose leadership shaped KBEC's
+            events, culture, partnerships, and long-term direction.
+          </p>
+        </div>
+
+        <aside class="directory-hero-panel">
+          <span class="source-pill">
+            <i class="fa-solid fa-timeline" aria-hidden="true"></i>
+            Year Based Archive
+          </span>
+          <p>
+            Alumni are grouped by fiscal year so visitors can understand how
+            the club's leadership evolved across different panels.
+          </p>
+        </aside>
+      </section>
+
+      <section class="directory-section" aria-labelledby="alumni-directory-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Browse by Panel</p>
+            <h2 id="alumni-directory-title">Alumni Directory</h2>
+          </div>
+          <p>
+            Filter past members by executive year and explore the people who
+            helped build KBEC into the organization it is today.
+          </p>
+        </div>
+
+        <div class="directory-summary" data-directory-summary></div>
+        <p class="directory-status" data-directory-status aria-live="polite"></p>
+        <div class="filter-row" data-directory-filters aria-label="Alumni filters"></div>
+        <div class="cards-grid people-grid" data-directory-grid></div>
+      </section>
+
+      <section class="directory-cta" aria-labelledby="alumni-cta-title">
+        <h2 id="alumni-cta-title">Current Leadership</h2>
+        <p>
+          View the present panel continuing the work of previous KBEC teams.
+        </p>
+        <a href="executive-panel.html">
+          Executive Panel
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </section>
+    </main>
+
+    <div data-site-footer></div>
+
+    <script src="js/site-layout.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/directory-pages.js"></script>
+  </body>
+</html>

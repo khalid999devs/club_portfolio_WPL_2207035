@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events | KUET Business and Entrepreneurship Club</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;600;700&family=Six+Caps&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/site-layout.css" />
+    <link rel="stylesheet" href="styles/directory-pages.css" />
+  </head>
+  <body>
+    <div data-site-header></div>
+
+    <main class="directory-page" id="top" data-directory-page="events">
+      <section class="directory-hero" aria-labelledby="directory-title">
+        <div>
+          <p class="directory-kicker">KBEC Programs</p>
+          <h1 class="directory-title" id="directory-title">Events</h1>
+          <p class="directory-copy">
+            Explore the flagship competitions, sessions, summits, and
+            idea-sharing experiences hosted by KUET Business and
+            Entrepreneurship Club.
+          </p>
+        </div>
+
+        <aside class="directory-hero-panel">
+          <span class="source-pill">
+            <i class="fa-solid fa-database" aria-hidden="true"></i>
+            Official Event Archive
+          </span>
+          <p>
+            Event cards are organized with year filters, event details, images,
+            and source links so the archive works like a complete club website.
+          </p>
+        </aside>
+      </section>
+
+      <section class="directory-section" aria-labelledby="event-library-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">Browse by Year</p>
+            <h2 id="event-library-title">Event Library</h2>
+          </div>
+          <p>
+            Filter through KBEC's public events, from national case competitions
+            to TEDxKUET and industry learning sessions.
+          </p>
+        </div>
+
+        <div class="directory-summary" data-directory-summary></div>
+        <p class="directory-status" data-directory-status aria-live="polite"></p>
+        <div class="filter-row" data-directory-filters aria-label="Event filters"></div>
+        <div class="cards-grid events-grid" data-directory-grid></div>
+      </section>
+
+      <section class="directory-cta" aria-labelledby="events-cta-title">
+        <h2 id="events-cta-title">Build the Next Event</h2>
+        <p>
+          Join the team that plans competitions, coordinates partners, and
+          creates high-impact learning experiences for KUET students.
+        </p>
+        <a href="register.html">
+          Register Now
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </section>
+    </main>
+
+    <div data-site-footer></div>
+
+    <script src="js/site-layout.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/directory-pages.js"></script>
+  </body>
+</html>

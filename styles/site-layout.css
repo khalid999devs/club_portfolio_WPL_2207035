@@ -36,6 +36,7 @@ body {
   opacity: 1;
   transform: translate3d(0, 0, 0);
   will-change: transform;
+  box-sizing: border-box;
   transition:
     top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
     left 0.42s cubic-bezier(0.22, 1, 0.36, 1),
@@ -83,6 +84,7 @@ body {
   display: inline-flex;
   flex: 0 1 clamp(12.8rem, 17.6vw, 18.6rem);
   width: clamp(12.8rem, 17.6vw, 18.6rem);
+  min-width: 0;
   max-width: 48vw;
   max-height: 3.75rem;
   text-decoration: none;
@@ -104,6 +106,7 @@ body {
   align-items: center;
   gap: clamp(0.55rem, 0.75vw, 0.8rem);
   flex: 0 0 auto;
+  min-width: 0;
 }
 
 .sound-toggle,
@@ -354,7 +357,8 @@ body {
 }
 
 .site-menu a:hover,
-.site-menu a:focus-visible {
+.site-menu a:focus-visible,
+.site-menu a[aria-current='page'] {
   color: #101010;
   background: rgba(255, 255, 255, 0.78);
   transform: translateX(0.16rem);
@@ -555,6 +559,10 @@ body {
   transition:
     color 0.18s ease,
     transform 0.18s ease;
+}
+
+.footer-explore a[aria-current='page'] {
+  color: rgba(244, 217, 131, 0.86);
 }
 
 .social-links {
@@ -866,10 +874,63 @@ body {
   }
 }
 
+@media (max-width: 540px) {
+  .club-logo-link {
+    flex-basis: min(30vw, 7.8rem);
+    width: min(30vw, 7.8rem);
+  }
+
+  .hero-actions {
+    gap: 0.26rem;
+    position: fixed;
+    top: 0.65rem;
+    right: clamp(1.25rem, 12vw, 5rem);
+    z-index: 10002;
+  }
+
+  .menu-button,
+  .register-button {
+    min-height: 2.15rem;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.54rem;
+    letter-spacing: 0.06em;
+  }
+
+  .menu-button {
+    gap: 0.42rem;
+  }
+
+  .register-button {
+    position: relative;
+    width: 2.15rem;
+    min-width: 2.15rem;
+    max-width: 2.15rem;
+    overflow: hidden;
+    padding: 0;
+    color: transparent;
+  }
+
+  .register-button::before {
+    content: 'R';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(15, 15, 15, 0.92);
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .menu-dots {
+    gap: 0.2rem;
+  }
+}
+
 @media (max-width: 420px) {
   .club-logo-link {
-    flex-basis: min(38vw, 9.1rem);
-    width: min(38vw, 9.1rem);
+    flex-basis: min(29vw, 7.1rem);
+    width: min(29vw, 7.1rem);
     max-height: 2.4rem;
   }
 
